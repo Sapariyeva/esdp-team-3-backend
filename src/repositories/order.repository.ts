@@ -36,4 +36,6 @@ export class OrderRepository extends Repository<Order> {
             .where("po.performer_id = :performer_id", { performer_id })
             .getMany();
     }
+
+    // TODO Дописать создание, удаление и изменение статуса заказа
 }
