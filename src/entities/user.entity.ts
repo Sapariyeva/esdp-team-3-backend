@@ -11,19 +11,34 @@ export class User implements IUser {
     id!: number
 
     @Column()
-    displayName!: string
+    display_name!: string
 
     @Column()
     username!: string
 
     @Column()
+    email!: string
+
+    @Column()
     password!: string
 
-    @Column({ default: ERole.user })
+    @Column()
+    avatar!: string
+
+    @Column()
     role!: ERole
 
     @Column({ nullable: true })
     token!: string
+
+    @Column()
+    avg_rating!: number
+
+    @Column()
+    rating_count!: number
+
+    @Column()
+    last_postition!: string
 
     hashPassword(): void {
         const salt = bcrypt.genSaltSync(10);
