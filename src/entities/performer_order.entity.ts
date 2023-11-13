@@ -13,23 +13,23 @@ export class PerformerOrder implements IPerformerOrder {
 
     @ManyToOne(() => Performer)
     @JoinColumn({ name: 'performer_id' })
-    artist!: Performer
+    performer!: Performer
 
     @Column()
     order_id!: number
 
-    @Column()
+    @Column({ nullable: true })
     start!: string
 
-    @Column()
+    @Column({ nullable: true })
     end!: string
 
-    @Column()
+    @Column({ default: false })
     disable!: boolean
 
-    @Column()
+    @Column({ nullable: true })
     performer_rating!: number
 
-    @Column()
+    @Column({ nullable: true })
     customer_rating!: number
 }

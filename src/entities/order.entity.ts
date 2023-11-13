@@ -14,7 +14,7 @@ export class Order implements IOrder {
 
     @ManyToOne(() => Customer)
     @JoinColumn({ name: 'customer_id' })
-    artist!: Customer
+    customer!: Customer
 
     @Column()
     service_id!: number
@@ -35,19 +35,19 @@ export class Order implements IOrder {
     @Column()
     performers_quantity!: number
 
-    @Column()
+    @Column({ nullable: true })
     time_worked!: number
 
-    @Column()
+    @Column({ nullable: true })
     income!: number
 
-    @Column()
+    @Column({ nullable: true })
     performer_payment!: number
 
-    @Column()
+    @Column({ nullable: true })
     tax!: number
 
-    @Column()
+    @Column({ nullable: true })
     profit!: number
 
     @Column()
@@ -55,6 +55,9 @@ export class Order implements IOrder {
 
     @Column()
     lng!: number
+
+    @Column({ nullable: true })
+    manager_id!: number
 
     @Column()
     status!: EOrderStatus

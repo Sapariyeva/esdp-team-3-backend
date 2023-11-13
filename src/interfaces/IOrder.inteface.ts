@@ -15,5 +15,6 @@ export interface IOrder {
     profit: number;
     lat: number;
     lng: number;
+    manager_id: number;
     status: EOrderStatus;
 }
