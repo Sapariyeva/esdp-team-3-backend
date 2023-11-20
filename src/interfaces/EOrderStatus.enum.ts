@@ -4,5 +4,6 @@ export enum EOrderStatus {
     WAITING = "WAITING",
     IN_PROGRESS = "IN_PROGRESS",
     CANCELED = "CANCELED",
+    REQUIRES_PAYMENT = "REQUIRES_PAYMENT",
     DONE = "DONE"
 }

@@ -1,5 +1,5 @@
 import { OrderRepository } from '../repositories/order.repository';
-import { IOrder } from '../interfaces/IOrder.inteface';
+import { IOrder } from '../interfaces/IOrder.interface';
 
 export class OrderService {
     private repository: OrderRepository;
@@ -26,5 +26,9 @@ export class OrderService {
 
     getOrdersByPerformer = async (performer_id: number): Promise<IOrder[]> => {
         return await this.repository.getOrdersByPerformer(performer_id);
+    }
+
+    createOrder = async (orderDto: IOrder): Promise<IOrder | null> => {
+        return await this.repository.createOrder(orderDto);
     }
 }

@@ -1,5 +1,5 @@
 import { Column, PrimaryGeneratedColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { IOrder } from '../interfaces/IOrder.inteface';
+import { IOrder } from '../interfaces/IOrder.interface';
 import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
 import { Customer } from './customer.entity';
 import { Service } from './service.entity';

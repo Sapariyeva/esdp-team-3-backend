@@ -1,7 +1,8 @@
 import { Repository } from 'typeorm';
 import { appDataSource } from '../dataSource';
 import { Order } from '../entities/order.entity';
-import { IOrder } from '../interfaces/IOrder.inteface';
+import { IOrder } from '../interfaces/IOrder.interface';
+import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
 
 export class OrderRepository extends Repository<Order> {
     constructor() {
@@ -37,5 +38,24 @@ export class OrderRepository extends Repository<Order> {
             .getMany();
     }
 
-    // TODO Дописать создание, удаление и изменение статуса заказа
+    async createOrder(data: IOrder): Promise<IOrder> {
+        const order = new Order();
+        order.address = data.address;
+        order.customer_id = data.customer_id;
+        order.service_id = data.service_id
+        order.order_data = data.order_data;
+        order.performers_quantity = data.performers_quantity;
+        order.status = EOrderStatus.IN_PROGRESS;
+        const savedOrder = await this.save(order);
+        return savedOrder;
+    }
+
+    async changeStatus(id: number, status: EOrderStatus): Promise<IOrder | null> {
+        const updatedOrder = await this.update({ id }, { status });
+        if (updatedOrder.affected && updatedOrder.affected > 0) {
+            return updatedOrder.raw[0] as IOrder;
+        } else {
+            return null;
+        }
+    }
 }

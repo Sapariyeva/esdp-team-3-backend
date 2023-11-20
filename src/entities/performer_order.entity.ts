@@ -1,6 +1,6 @@
 import { Column, PrimaryGeneratedColumn, Entity, Unique, ManyToOne, JoinColumn } from 'typeorm';
 import { IPerformerOrder } from '../interfaces/IPerformerOrder.interface';
-import { Performer } from './performer.entity';
+import { User } from './user.entity';
 
 @Entity()
 @Unique(['identifying_number', 'user_id'])
@@ -11,9 +11,9 @@ export class PerformerOrder implements IPerformerOrder {
     @Column()
     performer_id!: number
 
-    @ManyToOne(() => Performer)
+    @ManyToOne(() => User)
     @JoinColumn({ name: 'performer_id' })
-    performer!: Performer
+    performer!: User
 
     @Column()
     order_id!: number
