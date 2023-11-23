@@ -2,12 +2,7 @@ import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ERole } from '../interfaces/ERole.enum';
 
-export class RegisterUserDto {
-  @Expose()
-  @IsString()
-  @IsNotEmpty()
-  username!: string;
-
+export class RegisterUserByManagerDto {
   @Expose()
   @IsString()
   @IsOptional()
@@ -16,17 +11,7 @@ export class RegisterUserDto {
   @Expose()
   @IsString()
   @IsNotEmpty()
-  email!: string;
-
-  @Expose()
-  @IsString()
-  @IsNotEmpty()
   phone!: string;
-
-  @Expose()
-  @IsString()
-  @IsNotEmpty()
-  password!: string;
 
   @Expose()
   @IsString()

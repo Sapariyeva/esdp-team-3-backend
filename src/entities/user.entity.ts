@@ -11,19 +11,37 @@ export class User implements IUser {
     id!: number
 
     @Column()
-    displayName!: string
+    display_name!: string
 
     @Column()
+    phone!: string
+
+    @Column({ nullable: true })
     username!: string
 
-    @Column()
+    @Column({ nullable: true })
+    email!: string
+
+    @Column({ nullable: true })
     password!: string
 
-    @Column({ default: ERole.user })
+    @Column({ nullable: true })
+    avatar!: string
+
+    @Column()
     role!: ERole
 
     @Column({ nullable: true })
     token!: string
+
+    @Column({ nullable: true })
+    avg_rating!: number
+
+    @Column({ nullable: true })
+    rating_count!: number
+
+    @Column({ nullable: true })
+    last_postition!: string
 
     hashPassword(): void {
         const salt = bcrypt.genSaltSync(10);

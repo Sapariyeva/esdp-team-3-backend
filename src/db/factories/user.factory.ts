@@ -8,7 +8,7 @@ const roles = [ERole.admin, ERole.manager, ERole.customer, ERole.performer];
 export const UserFactory = setSeederFactory(User, (faker: Faker) => {
     const user = new User();
     user.username = faker.internet.userName();
-    user.displayName = faker.person.firstName();
+    user.display_name = faker.person.firstName();
     user.password = 'password';
     user.role = faker.helpers.arrayElement(roles);
     user.hashPassword();

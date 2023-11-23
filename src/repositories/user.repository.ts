@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid';
 import { SignInUserDto } from '../dto/signInUser.dto';
 import { RegisterUserDto } from '../dto/registerUser.dto';
 import bcrypt from 'bcrypt';
+import { RegisterUserByManagerDto } from '../dto/registerUserByManager.dto';
 
 export class UserRepository extends Repository<User> {
     constructor() {
@@ -49,6 +50,10 @@ export class UserRepository extends Repository<User> {
     async signUpUser(userDto: RegisterUserDto): Promise<IUser> {
         userDto.password = await this.hashPassword(userDto.password);
         return await this.save({ ...userDto, token: nanoid() });
+    }
+
+    async addUser(userDto: RegisterUserByManagerDto): Promise<IUser> {
+        return await this.save(userDto);
     }
 
     async signOut(token: string): Promise<void> {
