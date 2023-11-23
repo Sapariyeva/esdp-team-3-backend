@@ -1,5 +1,7 @@
 import { OrderRepository } from '../repositories/order.repository';
 import { IOrder } from '../interfaces/IOrder.interface';
+import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
+import { OrderDto } from '../dto/order.dto';
 
 export class OrderService {
     private repository: OrderRepository;
@@ -28,7 +30,11 @@ export class OrderService {
         return await this.repository.getOrdersByPerformer(performer_id);
     }
 
-    createOrder = async (orderDto: IOrder): Promise<IOrder | null> => {
+    createOrder = async (orderDto: OrderDto): Promise<IOrder | null> => {
         return await this.repository.createOrder(orderDto);
+    }
+
+    changeOrderStatus = async (id: number, status: EOrderStatus): Promise<IOrder | null> => {
+        return await this.repository.changeOrderStatus(id, status);
     }
 }

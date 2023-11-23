@@ -5,6 +5,7 @@ export interface IUser {
     display_name: string;
     username: string;
     email: string;
+    phone: string;
     password: string;
     avatar: string;
     token?: string | null;
@@ -12,5 +13,4 @@ export interface IUser {
     avg_rating: number;
     rating_count: number;
     last_postition: string;
-
 }

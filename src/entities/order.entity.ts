@@ -1,8 +1,8 @@
 import { Column, PrimaryGeneratedColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { IOrder } from '../interfaces/IOrder.interface';
 import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
-import { Customer } from './customer.entity';
 import { Service } from './service.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Order implements IOrder {
@@ -12,9 +12,9 @@ export class Order implements IOrder {
     @Column()
     customer_id!: number
 
-    @ManyToOne(() => Customer)
+    @ManyToOne(() => User)
     @JoinColumn({ name: 'customer_id' })
-    customer!: Customer
+    customer!: User
 
     @Column()
     service_id!: number
@@ -23,7 +23,7 @@ export class Order implements IOrder {
     @JoinColumn({ name: 'service_id' })
     service!: Service
 
-    @Column()
+    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     created_at!: string
 
     @Column()

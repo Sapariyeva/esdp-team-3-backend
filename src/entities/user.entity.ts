@@ -14,15 +14,18 @@ export class User implements IUser {
     display_name!: string
 
     @Column()
+    phone!: string
+
+    @Column({ nullable: true })
     username!: string
 
-    @Column()
+    @Column({ nullable: true })
     email!: string
 
-    @Column()
+    @Column({ nullable: true })
     password!: string
 
-    @Column()
+    @Column({ nullable: true })
     avatar!: string
 
     @Column()
@@ -31,13 +34,13 @@ export class User implements IUser {
     @Column({ nullable: true })
     token!: string
 
-    @Column()
+    @Column({ nullable: true })
     avg_rating!: number
 
-    @Column()
+    @Column({ nullable: true })
     rating_count!: number
 
-    @Column()
+    @Column({ nullable: true })
     last_postition!: string
 
     hashPassword(): void {
