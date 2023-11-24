@@ -16,31 +16,32 @@ export class OrderController {
         this.authService = new AuthService();
     }
 
+    getOrder: RequestHandler = async (req, res, next): Promise<void> => {
+        try {
+            const orders = await this.service.getOrders();
+            if (orders.length !== 0) {
+                res.send(orders);
+            } else {
+                res.status(400).send({
+                    success: false,
+                    message: 'orders not found'
+                });
+            }
+        } catch (e) {
+            next(e);
+        }
+    }
+
     getOrders: RequestHandler = async (req, res, next): Promise<void> => {
         try {
-            let token = req.headers['authorization'];
-            if (req.headers && token) {
-                if (token.startsWith('Bearer ')) token = token.slice(7);
-                const userRepository = new UserRepository();
-                const user = await userRepository.getUserByToken(token);
-                if (user) {
-                    const orders = await this.service.getOrders();
-                    if (orders.length !== 0) {
-                        res.send(orders);
-                    } else {
-                        res.status(400).send({
-                            success: false,
-                            message: 'orders not found'
-                        });
-                    }
-                } else {
-                    res.status(401).send({
-                        success: false,
-                        message: 'wrong token'
-                    })
-                }
+            const orders = await this.service.getOrders();
+            if (orders.length !== 0) {
+                res.send(orders);
             } else {
-                throw new Error('There is no authorization token')
+                res.status(400).send({
+                    success: false,
+                    message: 'orders not found'
+                });
             }
         } catch (e) {
             next(e);
@@ -135,15 +136,15 @@ export class OrderController {
         }
     }
 
-    changeOrderStatus: RequestHandler = async (req, res): Promise<void> => {
+    cancelOrder: RequestHandler = async (req, res): Promise<void> => {
         try {
-            const updatedOrder = await this.service.changeOrderStatus(req.body.order_id, req.body.order_status);
-            if (updatedOrder) {
-                res.send(updatedOrder);
+            const canceledOrder = await this.service.cancelOrder(parseInt(req.params.id));
+            if (canceledOrder) {
+                res.send(canceledOrder);
             } else {
                 res.status(400).send({
                     success: false,
-                    message: 'order wasn\'t updated'
+                    message: 'order wasn\'t canceled'
                 });
             }
         } catch (e: any) {
@@ -160,5 +161,6 @@ export class OrderController {
             }
         }
     }
+
 
 }

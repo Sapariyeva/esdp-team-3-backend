@@ -34,6 +34,10 @@ export class OrderService {
         return await this.repository.createOrder(orderDto);
     }
 
+    cancelOrder = async (id: number): Promise<IOrder | null> => {
+        return await this.repository.cancelOrder(id);
+    }
+
     changeOrderStatus = async (id: number, status: EOrderStatus): Promise<IOrder | null> => {
         return await this.repository.changeOrderStatus(id, status);
     }

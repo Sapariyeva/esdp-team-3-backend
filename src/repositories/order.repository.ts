@@ -54,6 +54,15 @@ export class OrderRepository extends Repository<Order> {
         return savedOrder;
     }
 
+    async cancelOrder(id: number): Promise<IOrder | null> {
+        const updatedOrder = await this.update({ id }, { status: EOrderStatus.CANCELED });
+        if (updatedOrder.affected && updatedOrder.affected > 0) {
+            return updatedOrder.raw[0] as IOrder;
+        } else {
+            return null;
+        }
+    }
+
     async changeOrderStatus(id: number, status: EOrderStatus): Promise<IOrder | null> {
         const updatedOrder = await this.update({ id }, { status });
         if (updatedOrder.affected && updatedOrder.affected > 0) {
