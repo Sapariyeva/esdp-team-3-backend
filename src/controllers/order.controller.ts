@@ -1,6 +1,5 @@
 import { RequestHandler } from "express";
 import { OrderService } from "../services/order.service";
-import { UserRepository } from "../repositories/user.repository";
 import { OrderDto } from "../dto/order.dto";
 import { plainToInstance } from "class-transformer";
 import { ERole } from "../interfaces/ERole.enum";
@@ -91,7 +90,7 @@ export class OrderController {
     createOrder: RequestHandler = async (req, res): Promise<void> => {
         try {
             const orderDto = plainToInstance(OrderDto, req.body);
-            if (req.app.locals.user.role === ERole.manager || req.app.locals.user.role === ERole.admin) {
+            if (req.app.locals.user.roles.includes(ERole.manager) || req.app.locals.user.roles.includes(ERole.admin)) {
                 // Если заказ создает менеджер
                 orderDto.manager_id = req.app.locals.user.id;
                 if (!orderDto.customer_id) {
@@ -101,11 +100,20 @@ export class OrderController {
                             message: 'No client was selected'
                         });
                     }
-                    // Создаем клиента
-                    const registerUserByManager = plainToInstance(RegisterUserByManagerDto, req.body);
-                    registerUserByManager.role = ERole.customer;
-                    const createdCustomer = await this.authService.addUser(registerUserByManager);
-                    orderDto.customer_id = createdCustomer.id;
+                    // Проверяем наличие пользователя в БД по номеру телефона
+                    const user = await this.authService.getUserByPhone(orderDto.phone);
+                    // Если пользователь не найден
+                    if (!user) {
+                        // Создаем клиента
+                        const registerUserByManager = plainToInstance(RegisterUserByManagerDto, req.body);
+                        registerUserByManager.roles.push(ERole.customer);
+                        const createdCustomer = await this.authService.addUser(registerUserByManager);
+                        orderDto.customer_id = createdCustomer.id;
+                    } else {
+                        // Если у найденного пользователя не было роли клиента, добавляем её
+                        await this.authService.addRole(user.id, ERole.customer);
+                        orderDto.customer_id = user.id;
+                    }
                 }
             } else {
                 // Если заказ создает клиент

@@ -28,8 +28,8 @@ export class User implements IUser {
     @Column({ nullable: true })
     avatar!: string
 
-    @Column()
-    role!: ERole
+    @Column({ type: "json" })
+    roles!: ERole[]
 
     @Column({ nullable: true })
     token!: string

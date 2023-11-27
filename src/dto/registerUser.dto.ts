@@ -31,5 +31,5 @@ export class RegisterUserDto {
   @Expose()
   @IsString()
   @IsNotEmpty()
-  role!: ERole;
+  roles!: ERole[];
 }
