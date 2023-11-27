@@ -16,5 +16,5 @@ export class RegisterUserByManagerDto {
   @Expose()
   @IsString()
   @IsNotEmpty()
-  roles!: ERole[];
+  role!: ERole;
 }

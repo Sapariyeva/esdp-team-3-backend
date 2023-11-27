@@ -32,6 +32,9 @@ export class Order implements IOrder {
     @Column()
     address!: string
 
+    @Column({ nullable: true })
+    description!: string
+
     @Column()
     performers_quantity!: number
 
@@ -58,6 +61,9 @@ export class Order implements IOrder {
 
     @Column({ nullable: true })
     manager_id!: number
+
+    @Column({ nullable: true })
+    manager_commentary!: string
 
     @Column()
     status!: EOrderStatus

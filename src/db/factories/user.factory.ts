@@ -10,7 +10,7 @@ export const UserFactory = setSeederFactory(User, (faker: Faker) => {
     user.username = faker.internet.userName();
     user.display_name = faker.person.firstName();
     user.password = 'password';
-    user.roles = faker.helpers.arrayElements(roles);
+    user.role = faker.helpers.arrayElement(roles);
     user.hashPassword();
     user.generateToken();
     return user;

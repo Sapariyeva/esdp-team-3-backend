@@ -3,6 +3,7 @@ import { IUser } from '../interfaces/IUser.interface';
 import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt'
 import { ERole } from '../interfaces/ERole.enum';
+import { EUserStatus } from '../interfaces/EUserStatus.enum';
 
 @Entity()
 @Unique(['username'])
@@ -28,8 +29,11 @@ export class User implements IUser {
     @Column({ nullable: true })
     avatar!: string
 
-    @Column({ type: "json" })
-    roles!: ERole[]
+    @Column({ nullable: true })
+    birthday!: string
+
+    @Column()
+    role!: ERole
 
     @Column({ nullable: true })
     token!: string
@@ -42,6 +46,12 @@ export class User implements IUser {
 
     @Column({ nullable: true })
     last_postition!: string
+
+    @Column({ nullable: true })
+    identifying_number!: number
+
+    @Column({ default: EUserStatus.ACTIVE })
+    status!: EUserStatus
 
     hashPassword(): void {
         const salt = bcrypt.genSaltSync(10);
