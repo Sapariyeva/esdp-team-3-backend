@@ -20,9 +20,9 @@ export class UserRepository extends Repository<User> {
         })
     }
 
-    async getUserByPhone(phone: string): Promise<User | null> {
+    async getUserByPhone(phone: string, role: ERole): Promise<User | null> {
         return await this.findOne({
-            where: { phone }
+            where: { phone, role }
         })
     }
 
@@ -61,17 +61,6 @@ export class UserRepository extends Repository<User> {
 
     async addUser(userDto: RegisterUserByManagerDto): Promise<IUser> {
         return await this.save(userDto);
-    }
-
-    async addRole(id: number, role: ERole) {
-        const user = await this.findOne({ where: { id } });
-        if (user) {
-            let { roles } = user;
-            if (!roles.includes(role)) {
-                roles = [...roles, role];
-                await this.update(id, { roles });
-            }
-        }
     }
 
     async signOut(token: string): Promise<void> {

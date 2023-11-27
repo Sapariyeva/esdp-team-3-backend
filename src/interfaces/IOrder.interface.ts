@@ -7,6 +7,7 @@ export interface IOrder {
     created_at?: string;
     order_data: string;
     address: string;
+    description?: string;
     performers_quantity: number;
     time_worked?: number;
     income?: number;
@@ -16,5 +17,6 @@ export interface IOrder {
     lat: number;
     lng: number;
     manager_id?: number;
+    manager_commentary?: string;
     status?: EOrderStatus;
 }

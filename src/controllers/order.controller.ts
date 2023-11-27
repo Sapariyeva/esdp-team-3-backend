@@ -90,7 +90,7 @@ export class OrderController {
     createOrder: RequestHandler = async (req, res): Promise<void> => {
         try {
             const orderDto = plainToInstance(OrderDto, req.body);
-            if (req.app.locals.user.roles.includes(ERole.manager) || req.app.locals.user.roles.includes(ERole.admin)) {
+            if (req.app.locals.user.role === ERole.manager || req.app.locals.user.role === ERole.admin) {
                 // Если заказ создает менеджер
                 orderDto.manager_id = req.app.locals.user.id;
                 if (!orderDto.customer_id) {
@@ -100,18 +100,16 @@ export class OrderController {
                             message: 'No client was selected'
                         });
                     }
-                    // Проверяем наличие пользователя в БД по номеру телефона
-                    const user = await this.authService.getUserByPhone(orderDto.phone);
+                    // Проверяем наличие пользователя в БД по номеру телефона и роли клиента
+                    const user = await this.authService.getUserByPhone(orderDto.phone, ERole.customer);
                     // Если пользователь не найден
                     if (!user) {
                         // Создаем клиента
                         const registerUserByManager = plainToInstance(RegisterUserByManagerDto, req.body);
-                        registerUserByManager.roles.push(ERole.customer);
+                        registerUserByManager.role = ERole.customer;
                         const createdCustomer = await this.authService.addUser(registerUserByManager);
                         orderDto.customer_id = createdCustomer.id;
                     } else {
-                        // Если у найденного пользователя не было роли клиента, добавляем её
-                        await this.authService.addRole(user.id, ERole.customer);
                         orderDto.customer_id = user.id;
                     }
                 }

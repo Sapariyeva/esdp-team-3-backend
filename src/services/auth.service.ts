@@ -16,8 +16,8 @@ export class AuthService {
         return await this.repository.getUserByToken(token);
     }
 
-    getUserByPhone = async (phone: string): Promise<IUser | null> => {
-        return await this.repository.getUserByPhone(phone);
+    getUserByPhone = async (phone: string, role: ERole): Promise<IUser | null> => {
+        return await this.repository.getUserByPhone(phone, role);
     }
 
     signIn = async (userDto: SignInUserDto): Promise<IUser> => {
@@ -30,10 +30,6 @@ export class AuthService {
 
     addUser = async (userDto: RegisterUserByManagerDto): Promise<IUser> => {
         return await this.repository.addUser(userDto);
-    }
-
-    addRole = async (userId: number, userRole: ERole) => {
-        return await this.repository.addRole(userId, userRole);
     }
 
     signOut = async (token: string): Promise<void> => {
