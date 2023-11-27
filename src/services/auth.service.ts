@@ -3,6 +3,7 @@ import { RegisterUserDto } from '../dto/registerUser.dto';
 import { IUser } from '../interfaces/IUser.interface';
 import { UserRepository } from '../repositories/user.repository';
 import { RegisterUserByManagerDto } from '../dto/registerUserByManager.dto';
+import { ERole } from '../interfaces/ERole.enum';
 
 export class AuthService {
     private repository: UserRepository;
@@ -15,6 +16,10 @@ export class AuthService {
         return await this.repository.getUserByToken(token);
     }
 
+    getUserByPhone = async (phone: string): Promise<IUser | null> => {
+        return await this.repository.getUserByPhone(phone);
+    }
+
     signIn = async (userDto: SignInUserDto): Promise<IUser> => {
         return await this.repository.signInUser(userDto);
     }
@@ -25,6 +30,10 @@ export class AuthService {
 
     addUser = async (userDto: RegisterUserByManagerDto): Promise<IUser> => {
         return await this.repository.addUser(userDto);
+    }
+
+    addRole = async (userId: number, userRole: ERole) => {
+        return await this.repository.addRole(userId, userRole);
     }
 
     signOut = async (token: string): Promise<void> => {

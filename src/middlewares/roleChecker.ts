@@ -12,11 +12,15 @@ export const roleChecker = (roles: string[]): RequestHandler => async (req, res,
         if (token.startsWith('Bearer ')) token = token.slice(7);
         const userRepository = new UserRepository();
         const user = await userRepository.getUserByToken(token);
-        if (user && roles.includes(user.role)) {
-            req.app.locals = {
-                user: user
-            }
-            next()
+        if (user) {
+            user.roles.forEach(role => {
+                if (roles.includes(role)) {
+                    req.app.locals = {
+                        user: user
+                    }
+                    next()
+                }
+            });
         } else {
             res.status(403).send({
                 success: false,

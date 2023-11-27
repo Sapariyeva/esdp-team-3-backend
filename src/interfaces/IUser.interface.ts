@@ -9,7 +9,7 @@ export interface IUser {
     password: string;
     avatar: string;
     token?: string | null;
-    role: ERole;
+    roles: ERole[];
     avg_rating: number;
     rating_count: number;
     last_postition: string;
