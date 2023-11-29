@@ -5,11 +5,6 @@ import { ERole } from '../interfaces/ERole.enum';
 export class RegisterUserDto {
   @Expose()
   @IsString()
-  @IsNotEmpty()
-  username!: string;
-
-  @Expose()
-  @IsString()
   @IsOptional()
   display_name!: string;
 
