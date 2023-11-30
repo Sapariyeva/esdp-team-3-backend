@@ -20,7 +20,7 @@ export class AuthController {
             res.send({
                 success: true,
                 message: 'You logged in',
-                payload: { ...user, password: undefined },
+                payload: { ...user, password: undefined }
             })
         } catch (e: any) {
             res.status(401).send({
@@ -61,7 +61,7 @@ export class AuthController {
                     message: 'User already exists',
                     errors: [
                         {
-                            field: 'username',
+                            field: 'phone',
                             messages: ['Username exist'],
                         },
                     ],

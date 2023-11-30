@@ -101,7 +101,7 @@ export class OrderController {
                         });
                     }
                     // Проверяем наличие пользователя в БД по номеру телефона и роли клиента
-                    const user = await this.authService.getUserByPhone(orderDto.phone, ERole.customer);
+                    const user = await this.authService.getUserByPhoneAndRole(orderDto.phone, ERole.customer);
                     // Если пользователь не найден
                     if (!user) {
                         // Создаем клиента

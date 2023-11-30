@@ -1,12 +1,10 @@
-import { Column, PrimaryGeneratedColumn, Entity, Unique } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, Entity } from 'typeorm';
 import { IUser } from '../interfaces/IUser.interface';
-import { nanoid } from 'nanoid';
-import bcrypt from 'bcrypt'
 import { ERole } from '../interfaces/ERole.enum';
 import { EUserStatus } from '../interfaces/EUserStatus.enum';
+import bcrypt from 'bcrypt'
 
 @Entity()
-@Unique(['username'])
 export class User implements IUser {
     @PrimaryGeneratedColumn()
     id!: number
@@ -16,9 +14,6 @@ export class User implements IUser {
 
     @Column()
     phone!: string
-
-    @Column({ nullable: true })
-    username!: string
 
     @Column({ nullable: true })
     email!: string
@@ -34,9 +29,6 @@ export class User implements IUser {
 
     @Column()
     role!: ERole
-
-    @Column({ nullable: true })
-    token!: string
 
     @Column({ nullable: true })
     avg_rating!: number
@@ -57,9 +49,4 @@ export class User implements IUser {
         const salt = bcrypt.genSaltSync(10);
         this.password = bcrypt.hashSync(this.password, salt);
     }
-
-    generateToken(): void {
-        this.token = nanoid();
-    }
-
 }

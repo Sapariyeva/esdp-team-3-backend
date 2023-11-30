@@ -24,6 +24,7 @@
     "music-metadata": "^7.13.0",
     "mysql2": "^3.6.1",
     "nanoid": "^3.3.6",
+    "redis": "^4.6.11",
     "ts-node": "^10.9.1",
     "tslib": "^2.6.0",
     "typeorm": "^0.3.17",
