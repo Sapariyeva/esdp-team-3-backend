@@ -20,16 +20,16 @@ export class PerformerOrderService {
     return await this.repository.createPerformerOrder(performerOrderDto);
   }
 
-  updatePerformerOrderStart = async (orderId: number, performerId: number, start: Date): Promise<IPerformerOrder | null> => {
-    return await this.repository.updatePerformerOrderStart(orderId, performerId, start);
+  updatePerformerOrderStart = async (order_id: number, performer_id: number, start: Date): Promise<IPerformerOrder | null> => {
+    return await this.repository.updatePerformerOrderStart(order_id, performer_id, start);
   }
 
-  updatePerformerOrderEnd = async (orderId: number, performerId: number, end: Date): Promise<IPerformerOrder | null> => {
-    return await this.repository.updatePerformerOrderEnd(orderId, performerId, end);
+  updatePerformerOrderEnd = async (order_id: number, performer_id: number, end: Date): Promise<IPerformerOrder | null> => {
+    return await this.repository.updatePerformerOrderEnd(order_id, performer_id, end);
   }
 
-  updatePerformerOrderDisable = async (orderId: number, performerId: number, disable: boolean): Promise<IPerformerOrder | null> => {
-    return await this.repository.updatePerformerOrderDisable(orderId, performerId, disable);
+  updatePerformerOrderDisable = async (order_id: number, performer_id: number, disable: boolean): Promise<IPerformerOrder | null> => {
+    return await this.repository.updatePerformerOrderDisable(order_id, performer_id, disable);
   }
 
   respondToOrder = async (responseDto: OrderResponseDto): Promise<IPerformerOrder> => {
