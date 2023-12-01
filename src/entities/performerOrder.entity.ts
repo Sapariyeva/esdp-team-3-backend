@@ -3,7 +3,7 @@ import { IPerformerOrder } from '../interfaces/IPerformerOrder.interface';
 import { User } from './user.entity';
 
 @Entity()
-@Unique(['identifying_number', 'user_id'])
+  @Unique([ 'id'])
 export class PerformerOrder implements IPerformerOrder {
     @PrimaryGeneratedColumn()
     id!: number
@@ -19,10 +19,10 @@ export class PerformerOrder implements IPerformerOrder {
     order_id!: number
 
     @Column({ nullable: true })
-    start!: string
+    start!: Date
 
     @Column({ nullable: true })
-    end!: string
+    end!: Date
 
     @Column({ default: false })
     disable!: boolean
