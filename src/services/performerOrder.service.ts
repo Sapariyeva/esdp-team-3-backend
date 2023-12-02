@@ -18,11 +18,9 @@ export class PerformerOrderService {
   
 
   createPerformerOrder = async (performerOrderDto: PerformerOrderDto): Promise<IPerformerOrder | null> => {
-    return await this.repository.createPerformerOrder(performerOrderDto);
+    const newOrder = await this.repository.createPerformerOrder(performerOrderDto);
+    return this.repository.findOne({ where: { id: newOrder.id } });
   }
-
-
-
 
   respondToOrder = async (responseDto: OrderResponseDto): Promise<IPerformerOrder> => {
     const performerOrderDto = new PerformerOrderDto();
@@ -30,11 +28,9 @@ export class PerformerOrderService {
     performerOrderDto.performer_id = responseDto.performer_id;
     performerOrderDto.status = EPerformerOrderStatus.WAITING;
 
-    // Проверка на существующий заказ
     const existingOrder = await this.repository.getPerformerOrderByOrderIdAndPerformerId(responseDto.order_id, responseDto.performer_id);
 
     if (existingOrder) {
-      // Если заказ уже существует, выбрасываем исключение или возвращаем сообщение об ошибке
       throw new Error(`You have already responded to this order.`);
     }
 
@@ -46,23 +42,28 @@ export class PerformerOrderService {
   rejectOrder = async (rejectionDto: OrderRejectionDto): Promise<IPerformerOrder | null> => {
     const { order_id, performer_id } = rejectionDto;
 
-    const updatedOrder = await this.repository.updatePerformerOrderStatus(order_id, performer_id, EPerformerOrderStatus.BANNED);
-
-    return updatedOrder;
+    await this.repository.updatePerformerOrderStatus(order_id, performer_id, EPerformerOrderStatus.BANNED);
+    return this.repository.findOne({ where: { order_id: order_id, performer_id: performer_id } });
   }
 
   notifyArrival = async (arrivalDto: ArrivalNotificationDto): Promise<IPerformerOrder | null> => {
     const { order_id, performer_id } = arrivalDto;
 
-    const updatedOrder = await this.repository.updatePerformerOrderStatus(order_id, performer_id, EPerformerOrderStatus.AWAITING_CONFIRMATION);
-
-    return updatedOrder;
+    await this.repository.updatePerformerOrderStatus(order_id, performer_id, EPerformerOrderStatus.AWAITING_CONFIRMATION);
+    return this.repository.findOne({ where: { order_id: order_id, performer_id: performer_id } });
   }
 
   notifyCompletion = async (completionDto: CompletionNotificationDto): Promise<IPerformerOrder | null> => {
     const { order_id, performer_id, end } = completionDto;
 
-    const updatedOrder = await this.repository.updatePerformerOrderEnd(order_id, performer_id, end);
+    await this.repository.updatePerformerOrderEnd(order_id, performer_id, end);
+
+    let updatedOrder = await this.repository.findOne({
+      where: {
+        order_id: order_id,
+        performer_id: performer_id
+      }
+    });
 
     if (updatedOrder) {
       updatedOrder.status = EPerformerOrderStatus.DONE;
