@@ -23,6 +23,12 @@ export class PerformerOrderRoute implements IRoute {
       this.controller.respondToOrder);  
 
     this.router.patch('/rejectOrder', roleChecker([ERole.admin, ERole.manager, ERole.performer]),
-      this.controller.rejectOrder);    
+      this.controller.rejectOrder);  
+      
+    this.router.patch('/notifyArrival', roleChecker([ERole.admin, ERole.manager, ERole.performer]),
+      this.controller.notifyArrival);
+
+    this.router.patch('/notifyCompletion', roleChecker([ERole.admin, ERole.manager, ERole.performer]),
+      this.controller.notifyCompletion);   
   }
 }
