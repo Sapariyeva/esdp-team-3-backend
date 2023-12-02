@@ -17,15 +17,12 @@ export class PerformerOrderRoute implements IRoute {
 
   private init() {
     this.router.post('/', roleChecker([ERole.admin, ERole.manager, ERole.performer]),
-      this.controller.createPerformerOrder.bind(this.controller));
+      this.controller.createPerformerOrder);
 
-    this.router.patch('/startOrder', roleChecker([ERole.admin, ERole.manager, ERole.performer]),
-      this.controller.startOrder.bind(this.controller));
+    this.router.patch('/respondToOrder', roleChecker([ERole.admin, ERole.manager, ERole.performer]),
+      this.controller.respondToOrder);  
 
-    this.router.patch('/endOrder', roleChecker([ERole.admin, ERole.manager, ERole.performer]),
-      this.controller.endOrder.bind(this.controller));
-
-    this.router.patch('/disableOrder', roleChecker([ERole.admin, ERole.manager, ERole.performer]),
-      this.controller.disableOrder.bind(this.controller));
+    this.router.patch('/rejectOrder', roleChecker([ERole.admin, ERole.manager, ERole.performer]),
+      this.controller.rejectOrder);    
   }
 }

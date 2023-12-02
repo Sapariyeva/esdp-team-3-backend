@@ -1,5 +1,6 @@
 import { Expose } from "class-transformer";
 import { IsNotEmpty, IsNumber } from "class-validator";
+import { EPerformerOrderStatus } from "../interfaces/EPerformerOrderStatus.enum";
 
 export class PerformerOrderDto {
   @Expose()
@@ -11,4 +12,7 @@ export class PerformerOrderDto {
   @IsNotEmpty()
   @IsNumber()
   performer_id!: number;
+
+  @Expose()
+  status!: EPerformerOrderStatus;
 }

@@ -1,4 +1,5 @@
 import { User } from "../entities/user.entity";
+import { EPerformerOrderStatus } from "./EPerformerOrderStatus.enum";
 
 export interface IPerformerOrder {
     id: number;
@@ -6,8 +7,8 @@ export interface IPerformerOrder {
     order_id: number;
     start: Date;
     end: Date;
-    disable: boolean;
+    status: EPerformerOrderStatus;
     performer_rating: number;
     customer_rating: number;
-  performer: User
+    performer: User
 }

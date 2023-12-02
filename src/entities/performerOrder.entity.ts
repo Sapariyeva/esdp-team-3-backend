@@ -1,6 +1,7 @@
 import { Column, PrimaryGeneratedColumn, Entity, Unique, ManyToOne, JoinColumn } from 'typeorm';
 import { IPerformerOrder } from '../interfaces/IPerformerOrder.interface';
 import { User } from './user.entity';
+import { EPerformerOrderStatus } from '../interfaces/EPerformerOrderStatus.enum';
 
 @Entity()
   @Unique([ 'id'])
@@ -24,8 +25,12 @@ export class PerformerOrder implements IPerformerOrder {
     @Column({ nullable: true })
     end!: Date
 
-    @Column({ default: false })
-    disable!: boolean
+    @Column({
+    type: "enum",
+    enum: EPerformerOrderStatus,
+    default: EPerformerOrderStatus.WAITING
+    })
+    status!: EPerformerOrderStatus;
 
     @Column({ nullable: true })
     performer_rating!: number

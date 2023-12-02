@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsDate } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class ArrivalNotificationDto {
   @Expose()
@@ -13,7 +13,6 @@ export class ArrivalNotificationDto {
   performer_id!: number;
 
   @Expose()
-  @IsNotEmpty()
-  @IsDate()
-  start!: Date;
+  @IsNumber()
+  start: number = 0;
 }

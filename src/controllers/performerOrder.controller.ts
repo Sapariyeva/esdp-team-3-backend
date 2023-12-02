@@ -23,7 +23,7 @@ export class PerformerOrderController {
     try {
       const actualData = req.body;
       console.log(actualData);
-      const performerOrder = await this.repository.createPerformerOrder(actualData);
+      const performerOrder = await this.service.createPerformerOrder(actualData);
       res.send(performerOrder);
     } catch (e) {
       next(e);
@@ -33,34 +33,23 @@ export class PerformerOrderController {
 
   startOrder: RequestHandler = async (req, res, next): Promise<void> => {
     try {
-      const { orderId, performerId, start } = req.body;
-      const updatedOrder = await this.service.updatePerformerOrderStart(orderId, performerId, start);
+      const { order_id, performer_id, start } = req.body;
+      const updatedOrder = await this.service.updatePerformerOrderStart(order_id, performer_id, start);
       res.send(updatedOrder);
     } catch (e) {
       next(e);
     }
-  }
+  } //не хватает ответа в консоле об успешной операции
 
   endOrder: RequestHandler = async (req, res, next): Promise<void> => {
     try {
-      const { orderId, performerId, end } = req.body;
-      const updatedOrder = await this.service.updatePerformerOrderEnd(orderId, performerId, end);
+      const { order_id, performer_id, end } = req.body;
+      const updatedOrder = await this.service.updatePerformerOrderEnd(order_id, performer_id, end);
       res.send(updatedOrder);
     } catch (e) {
       next(e);
     }
-  }
-
-  disableOrder: RequestHandler = async (req, res, next): Promise<void> => {
-    try {
-      const { orderId, performerId, disable } = req.body;
-      const updatedOrder = await this.service.updatePerformerOrderDisable(orderId, performerId, disable);
-      res.send(updatedOrder);
-    } catch (e) {
-      next(e);
-    }
-  }
- 
+  }//не хватает ответа в консоле об успешной операции
 
   respondToOrder: RequestHandler = async (req, res, next): Promise<void> => {
     try {

@@ -3,10 +3,24 @@ import { appDataSource } from '../dataSource';
 import { PerformerOrder } from '../entities/performerOrder.entity';
 import { PerformerOrderDto } from '../dto/performerOrder.dto';
 import { IPerformerOrder } from '../interfaces/IPerformerOrder.interface';
+import { EPerformerOrderStatus } from '../interfaces/EPerformerOrderStatus.enum';
 
 export class PerformerOrderRepository extends Repository<PerformerOrder> {
   constructor() {
     super(PerformerOrder, appDataSource.createEntityManager());
+  }
+
+  async getPerformerOrderByOrderIdAndPerformerId(order_id: number, performer_id: number): Promise<IPerformerOrder | null> {
+    return await this.findOne({ where: { order_id, performer_id } });
+  }
+
+  async updatePerformerOrderStatus(order_id: number, performer_id: number, status: EPerformerOrderStatus): Promise<IPerformerOrder | null> {
+    const updatedPerformerOrder = await this.update({ order_id: order_id, performer_id: performer_id }, { status });
+    if (updatedPerformerOrder.affected && updatedPerformerOrder.affected > 0) {
+      return updatedPerformerOrder.raw[0] as IPerformerOrder;
+    } else {
+      return null;
+    }
   }
 
   async createPerformerOrder(data: PerformerOrderDto): Promise<IPerformerOrder> {
@@ -24,7 +38,7 @@ export class PerformerOrderRepository extends Repository<PerformerOrder> {
     } else {
       return null;
     }
-  }
+  }//возможно нужно удалить
 
   async updatePerformerOrderEnd(order_id: number, performer_id: number, end: Date): Promise<IPerformerOrder | null> {
     const updatedPerformerOrder = await this.update({ order_id: order_id, performer_id: performer_id }, { end });
@@ -33,14 +47,7 @@ export class PerformerOrderRepository extends Repository<PerformerOrder> {
     } else {
       return null;
     }
-  }
+  }//возможно нужно удалить
 
-  async updatePerformerOrderDisable(order_id: number, performer_id: number, disable: boolean): Promise<IPerformerOrder | null> {
-    const updatedPerformerOrder = await this.update({ order_id: order_id, performer_id: performer_id }, { disable });
-    if (updatedPerformerOrder.affected && updatedPerformerOrder.affected > 0) {
-      return updatedPerformerOrder.raw[0] as IPerformerOrder;
-    } else {
-      return null;
-    }
-  }
+  
 }
