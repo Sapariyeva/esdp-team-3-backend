@@ -38,7 +38,7 @@ export class PerformerOrderRepository extends Repository<PerformerOrder> {
     } else {
       return null;
     }
-  }//возможно нужно удалить
+  }
 
   async updatePerformerOrderEnd(order_id: number, performer_id: number, end: Date): Promise<IPerformerOrder | null> {
     const updatedPerformerOrder = await this.update({ order_id: order_id, performer_id: performer_id }, { end });
@@ -47,7 +47,7 @@ export class PerformerOrderRepository extends Repository<PerformerOrder> {
     } else {
       return null;
     }
-  }//возможно нужно удалить
+  }
 
   
 }

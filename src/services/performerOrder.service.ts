@@ -1,7 +1,6 @@
 
 import { PerformerOrderDto } from '../dto/performerOrder.dto';
 import { OrderResponseDto } from '../dto/orderResponse.dto';
-
 import { ArrivalNotificationDto } from '../dto/arrivalNotification.dto';
 import { CompletionNotificationDto } from '../dto/completionNotification.dto';
 import { PerformerOrderRepository } from '../repositories/performerOrder.repository';
@@ -22,13 +21,7 @@ export class PerformerOrderService {
     return await this.repository.createPerformerOrder(performerOrderDto);
   }
 
-  updatePerformerOrderStart = async (order_id: number, performer_id: number, start: Date): Promise<IPerformerOrder | null> => {
-    return await this.repository.updatePerformerOrderStart(order_id, performer_id, start);
-  }
 
-  updatePerformerOrderEnd = async (order_id: number, performer_id: number, end: Date): Promise<IPerformerOrder | null> => {
-    return await this.repository.updatePerformerOrderEnd(order_id, performer_id, end);
-  }
 
 
   respondToOrder = async (responseDto: OrderResponseDto): Promise<IPerformerOrder> => {
