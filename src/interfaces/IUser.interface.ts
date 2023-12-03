@@ -1,12 +1,11 @@
 import { ERole } from "./ERole.enum";
 import { EUserStatus } from "./EUserStatus.enum";
 
-export interface IUser {
+export interface IUserWithoutPass {
     id: number;
     phone: string;
     display_name: string;
     email: string;
-    password: string;
     birthday: string;
     avatar: string;
     role: ERole;
@@ -15,4 +14,8 @@ export interface IUser {
     last_postition: string;
     identifying_number: number;
     status: EUserStatus;
+}
+
+export interface IUser extends Required<IUserWithoutPass> {
+    password: string;
 }

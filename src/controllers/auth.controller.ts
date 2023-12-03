@@ -3,8 +3,9 @@ import { AuthService } from "../services/auth.service";
 import { plainToInstance } from 'class-transformer';
 import { SignInUserDto } from "../dto/signInUser.dto";
 import { RegisterUserDto } from "../dto/registerUser.dto";
-import { validate } from "class-validator";
+import { UserWithRoleDto } from "../dto/userWithRole.dto";
 import { formatErrors } from "../helpers/formatErrors";
+import { validate } from "class-validator";
 
 export class AuthController {
     private service: AuthService;
@@ -13,15 +14,40 @@ export class AuthController {
         this.service = new AuthService();
     }
 
-    signIn: RequestHandler = async (req, res) => {
+    signInWithRole: RequestHandler = async (req, res) => {
         try {
-            const userDto = plainToInstance(SignInUserDto, req.body);
-            const user = await this.service.signIn(userDto);
+            const userDto = plainToInstance(UserWithRoleDto, req.body);
+            const user = await this.service.signInWithRole(userDto);
             res.send({
                 success: true,
                 message: 'You logged in',
-                payload: { ...user, password: undefined }
+                payload: user
             })
+        } catch (e: any) {
+            res.status(401).send({
+                success: false,
+                message: e.message
+            })
+        }
+    }
+
+    signIn: RequestHandler = async (req, res) => {
+        try {
+            const userDto = plainToInstance(SignInUserDto, req.body);
+            const users = await this.service.signIn(userDto);
+            if (users.length > 1) {
+                res.send({
+                    success: true,
+                    message: 'Choose your role',
+                    payload: { ...users, password: undefined }
+                })
+            } else {
+                res.send({
+                    success: true,
+                    message: 'You logged in',
+                    payload: users[0]
+                })
+            }
         } catch (e: any) {
             res.status(401).send({
                 success: false,
@@ -61,8 +87,8 @@ export class AuthController {
                     message: 'User already exists',
                     errors: [
                         {
-                            field: 'phone',
-                            messages: ['Username exist'],
+                            fields: ['phone', 'role'],
+                            messages: ['phone with this role allready exist'],
                         },
                     ],
                 });
