@@ -1,6 +1,6 @@
 import { Column, PrimaryGeneratedColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { IOrder } from '../interfaces/IOrder.interface';
-import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
+import { EOrderStatus } from '../enum/EOrderStatus.enum';
 import { Service } from './service.entity';
 import { User } from './user.entity';
 

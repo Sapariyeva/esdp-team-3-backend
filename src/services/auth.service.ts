@@ -2,7 +2,7 @@ import { SignInUserDto } from '../dto/signInUser.dto';
 import { RegisterUserDto } from '../dto/registerUser.dto';
 import { IUser, IUserWithoutPass } from '../interfaces/IUser.interface';
 import { UserRepository } from '../repositories/user.repository';
-import { ERole } from '../interfaces/ERole.enum';
+import { ERole } from '../enum/ERole.enum';
 import { nanoid } from 'nanoid';
 import { redisClient } from './redis.service';
 import { UserWithRoleDto } from '../dto/userWithRole.dto';

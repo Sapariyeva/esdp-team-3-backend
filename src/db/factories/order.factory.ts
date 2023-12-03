@@ -1,7 +1,7 @@
 import { Faker } from '@faker-js/faker';
 import { setSeederFactory } from 'typeorm-extension';
 import { Order } from '../../entities/order.entity';
-import { EOrderStatus } from '../../interfaces/EOrderStatus.enum';
+import { EOrderStatus } from '../../enum/EOrderStatus.enum';
 
 export const OrderFactory = setSeederFactory(Order, (faker: Faker) => {
     const order = new Order();

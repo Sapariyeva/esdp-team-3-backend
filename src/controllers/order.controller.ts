@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { OrderService } from "../services/order.service";
 import { OrderDto } from "../dto/order.dto";
 import { plainToInstance } from "class-transformer";
-import { ERole } from "../interfaces/ERole.enum";
+import { ERole } from "../enum/ERole.enum";
 import { AuthService } from "../services/auth.service";
 import { UserWithRoleDto } from "../dto/userWithRole.dto";
 
@@ -33,10 +33,47 @@ export class OrderController {
 
     getOrders: RequestHandler = async (req, res, next): Promise<void> => {
         try {
+            let manager_id = null;
+            let customer_id = null;
+            let performer_id = null;
             const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
             const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
-
-            const result = await this.service.getOrders(offset, limit);
+            if (req.query.manager) {
+                const manager = await this.authService.getUserByIdAndRole(Number(req.query.manager), ERole.manager);
+                if (!manager) {
+                    res.status(400).send({
+                        success: false,
+                        message: 'there is no such manager'
+                    });
+                } else {
+                    manager_id = manager.id;
+                }
+            }
+            if (req.query.customer) {
+                const customer = await this.authService.getUserByIdAndRole(Number(req.query.customer), ERole.customer);
+                if (!customer) {
+                    res.status(400).send({
+                        success: false,
+                        message: 'there is no such customer'
+                    });
+                } else {
+                    customer_id = customer.id;
+                }
+            }
+            if (req.query.performer) {
+                const performer = await this.authService.getUserByIdAndRole(Number(req.query.performer), ERole.performer);
+                if (!performer) {
+                    res.status(400).send({
+                        success: false,
+                        message: 'there is no such performer'
+                    });
+                } else {
+                    performer_id = performer.id;
+                }
+            }
+            const params = { offset, limit, manager_id, customer_id, performer_id };
+            console.log('test')
+            const result = await this.service.getOrders(params);
 
             if (result.orders.length !== 0) {
                 res.send(result);
@@ -45,66 +82,6 @@ export class OrderController {
                     success: false,
                     message: 'Orders not found'
                 });
-            }
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    getOrdersByManager: RequestHandler = async (req, res, next): Promise<void> => {
-        try {
-            if (!req.query.manager) {
-                next();
-            } else {
-                const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
-                const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
-                const manager = await this.authService.getUserByIdAndRole(Number(req.query.manager), ERole.manager);
-                if (!manager) {
-                    res.status(400).send({
-                        success: false,
-                        message: 'there is no such manager'
-                    });
-                } else {
-                    const orders = await this.service.getOrdersByManager(manager.id, offset, limit);
-                    if (orders) {
-                        res.send(orders);
-                    } else {
-                        res.status(400).send({
-                            success: false,
-                            message: 'orders not found'
-                        });
-                    }
-                }
-            }
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    getOrdersByCustomer: RequestHandler = async (req, res, next): Promise<void> => {
-        try {
-            if (!req.query.customer) {
-                next();
-            } else {
-                const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
-                const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
-                const customer = await this.authService.getUserByIdAndRole(Number(req.query.customer), ERole.customer);
-                if (!customer) {
-                    res.status(400).send({
-                        success: false,
-                        message: 'there is no such customer'
-                    });
-                } else {
-                    const orders = await this.service.getOrdersByCustomer(customer.id, offset, limit);
-                    if (orders) {
-                        res.send(orders);
-                    } else {
-                        res.status(400).send({
-                            success: false,
-                            message: 'orders not found'
-                        });
-                    }
-                }
             }
         } catch (e) {
             next(e);

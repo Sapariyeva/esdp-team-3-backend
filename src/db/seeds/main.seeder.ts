@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { User } from '../../entities/user.entity';
-import { ERole } from '../../interfaces/ERole.enum';
+import { ERole } from '../../enum/ERole.enum';
 import { Service } from '../../entities/service.entity';
 import { Order } from '../../entities/order.entity';
 import { IUser } from '../../interfaces/IUser.interface';

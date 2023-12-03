@@ -2,23 +2,58 @@ import { Repository } from 'typeorm';
 import { appDataSource } from '../dataSource';
 import { Order } from '../entities/order.entity';
 import { IOrder } from '../interfaces/IOrder.interface';
-import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
+import { EOrderStatus } from '../enum/EOrderStatus.enum';
 import { OrderDto } from '../dto/order.dto';
 import { IOrderList } from '../interfaces/IOrderList.interface';
+import { IGetOrderParams } from '../interfaces/IGetOrderParams';
 
 export class OrderRepository extends Repository<Order> {
     constructor() {
         super(Order, appDataSource.createEntityManager());
     }
 
-    async getOrders(offset: number, limit: number): Promise<IOrderList> {
-        const totalItems = await this.count();
-        const orders = await this.find({ skip: offset, take: limit });
-        const links = this.getLinks(totalItems, offset, limit);
+    async getOrders(params: IGetOrderParams): Promise<IOrderList> {
+        const { offset, limit, manager_id, customer_id, performer_id } = params;
+
+        const queryBuilder = this.createQueryBuilder("order");
+
+        if (manager_id !== null) {
+            queryBuilder.andWhere("order.manager_id = :manager_id", { manager_id });
+        }
+
+        if (customer_id !== null) {
+            queryBuilder.andWhere("order.customer_id = :customer_id", { customer_id });
+        }
+
+        // Раскомментировать когда будет готов performerOrder
+        // if (performer_id !== null) {
+        //     queryBuilder.innerJoin("performer_order", "po", "po.order_id = order.id")
+        //         .andWhere("po.performer_id = :performer_id", { performer_id });
+        // }
+
+        const totalItems = await queryBuilder.getCount();
+        const orders = await queryBuilder.skip(offset).take(limit).getMany();
+        const links = this.getLinks({
+            totalItems,
+            offset,
+            limit,
+            manager: manager_id,
+            customer: customer_id,
+            performer: performer_id
+        });
+
         return { orders, totalItems, totalPages: Math.ceil(totalItems / limit), links };
     }
 
-    getLinks(totalItems: number, offset: number, limit: number, manager: number | null = null, customer: number | null = null, performer: number | null = null): Record<string, string | null> {
+    getLinks(params: {
+        totalItems: number,
+        offset: number,
+        limit: number,
+        manager?: number | null,
+        customer?: number | null,
+        performer?: number | null
+    }): Record<string, string | null> {
+        const { totalItems, offset, limit, manager, customer, performer } = params;
         const totalPages = Math.ceil(totalItems / limit);
         const linkStr = `/order?${manager ? `manager=${manager}&` : ''}${customer ? `customer=${customer}&` : ''}${performer ? `performer=${performer}&` : ''}`;
         const links: Record<string, string | null> = {
@@ -40,41 +75,6 @@ export class OrderRepository extends Repository<Order> {
         return await this.findOne({
             where: { id }
         })
-    }
-
-    async getOrdersByManager(manager_id: number, offset: number, limit: number): Promise<IOrderList> {
-        const totalItems = await this.count({ where: { manager_id } });
-        const orders = await this.find({
-            where: { manager_id },
-            skip: offset, take: limit
-        });
-        const links = this.getLinks(totalItems, offset, limit, manager_id);
-        return { orders, totalItems, totalPages: Math.ceil(totalItems / limit), links };
-    }
-
-    async getOrdersByCustomer(customer_id: number, offset: number, limit: number): Promise<IOrderList> {
-        const totalItems = await this.count({ where: { customer_id } });
-        const orders = await this.find({
-            where: { customer_id },
-            skip: offset, take: limit
-        });
-        const links = this.getLinks(totalItems, offset, limit, null, customer_id);
-        return { orders, totalItems, totalPages: Math.ceil(totalItems / limit), links };
-    }
-
-    async getOrdersByPerformer(performer_id: number, offset: number, limit: number): Promise<IOrderList> {
-        const totalItems = await this.createQueryBuilder("order")
-            .innerJoin("performer_order", "po", "po.order_id = order.id")
-            .where("po.performer_id = :performer_id", { performer_id })
-            .getCount();
-        const orders = await this.createQueryBuilder("order")
-            .innerJoin("performer_order", "po", "po.order_id = order.id")
-            .where("po.performer_id = :performer_id", { performer_id })
-            .skip(offset)
-            .take(limit)
-            .getMany();
-        const links = this.getLinks(totalItems, offset, limit, null, null, performer_id);
-        return { orders, totalItems, totalPages: Math.ceil(totalItems / limit), links };
     }
 
     async createOrder(data: OrderDto): Promise<IOrder> {

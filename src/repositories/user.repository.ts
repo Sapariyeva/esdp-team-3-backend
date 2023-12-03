@@ -4,7 +4,7 @@ import { User } from '../entities/user.entity';
 import { appDataSource } from '../dataSource';
 import { SignInUserDto } from '../dto/signInUser.dto';
 import { RegisterUserDto } from '../dto/registerUser.dto';
-import { ERole } from '../interfaces/ERole.enum';
+import { ERole } from '../enum/ERole.enum';
 import { UserWithRoleDto } from '../dto/userWithRole.dto';
 import bcrypt from 'bcrypt';
 
