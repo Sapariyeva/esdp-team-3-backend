@@ -1,7 +1,8 @@
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { ERole } from '../interfaces/ERole.enum';
 
-export class SignInUserDto {
+export class UserWithRoleDto {
 	@Expose()
 	@IsString()
 	@IsNotEmpty()
@@ -14,4 +15,9 @@ export class SignInUserDto {
 	@IsString()
 	@IsNotEmpty()
 	password!: string;
+
+	@Expose()
+	@IsString()
+	@IsNotEmpty()
+	role!: ERole;
 }

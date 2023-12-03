@@ -1,10 +1,11 @@
-import { Column, PrimaryGeneratedColumn, Entity } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, Entity, Unique } from 'typeorm';
 import { IUser } from '../interfaces/IUser.interface';
 import { ERole } from '../interfaces/ERole.enum';
 import { EUserStatus } from '../interfaces/EUserStatus.enum';
 import bcrypt from 'bcrypt'
 
 @Entity()
+@Unique(['phone', 'role'])
 export class User implements IUser {
     @PrimaryGeneratedColumn()
     id!: number

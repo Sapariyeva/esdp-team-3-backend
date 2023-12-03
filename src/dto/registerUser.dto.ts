@@ -11,11 +11,6 @@ export class RegisterUserDto {
   @Expose()
   @IsString()
   @IsNotEmpty()
-  email!: string;
-
-  @Expose()
-  @IsString()
-  @IsNotEmpty()
   phone!: string;
 
   @Expose()

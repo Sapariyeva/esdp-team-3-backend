@@ -4,7 +4,7 @@ import { OrderDto } from "../dto/order.dto";
 import { plainToInstance } from "class-transformer";
 import { ERole } from "../interfaces/ERole.enum";
 import { AuthService } from "../services/auth.service";
-import { RegisterUserByManagerDto } from "../dto/registerUserByManager.dto";
+import { UserWithRoleDto } from "../dto/userWithRole.dto";
 
 export class OrderController {
     private service: OrderService;
@@ -105,7 +105,7 @@ export class OrderController {
                     // Если пользователь не найден
                     if (!user) {
                         // Создаем клиента
-                        const registerUserByManager = plainToInstance(RegisterUserByManagerDto, req.body);
+                        const registerUserByManager = plainToInstance(UserWithRoleDto, req.body);
                         registerUserByManager.role = ERole.customer;
                         const createdCustomer = await this.authService.addUser(registerUserByManager);
                         orderDto.customer_id = createdCustomer.id;

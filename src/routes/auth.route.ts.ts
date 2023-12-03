@@ -15,6 +15,7 @@ export class AuthRoute implements IRoute {
     private init() {
         this.router.post('/signUp', this.controller.signUp);
         this.router.post('/signIn', this.controller.signIn);
+        this.router.post('/comfirmRole', this.controller.signInWithRole);
         this.router.post('/signOut', this.controller.signOut);
     }
 }
