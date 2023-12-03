@@ -19,6 +19,12 @@ export class UserRepository extends Repository<User> {
         })
     }
 
+    async getUserByIdAndRole(id: number, role: ERole): Promise<IUser | null> {
+        return await this.findOne({
+            where: { id, role }
+        })
+    }
+
     async getUserByPhoneAndRole(phone: string, role: ERole): Promise<IUser | null> {
         return await this.findOne({
             where: { phone, role }

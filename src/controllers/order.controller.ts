@@ -17,9 +17,9 @@ export class OrderController {
 
     getOrder: RequestHandler = async (req, res, next): Promise<void> => {
         try {
-            const orders = await this.service.getOrders();
-            if (orders.length !== 0) {
-                res.send(orders);
+            const order = await this.service.getOrderById(parseInt(req.params.id));
+            if (order) {
+                res.send(order);
             } else {
                 res.status(400).send({
                     success: false,
@@ -33,34 +33,18 @@ export class OrderController {
 
     getOrders: RequestHandler = async (req, res, next): Promise<void> => {
         try {
-            const orders = await this.service.getOrders();
-            if (orders.length !== 0) {
-                res.send(orders);
+            const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
+            const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+
+            const result = await this.service.getOrders(offset, limit);
+
+            if (result.orders.length !== 0) {
+                res.send(result);
             } else {
                 res.status(400).send({
                     success: false,
-                    message: 'orders not found'
+                    message: 'Orders not found'
                 });
-            }
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    getOrdersByCustomer: RequestHandler = async (req, res, next): Promise<void> => {
-        try {
-            if (!req.query.customer) {
-                next();
-            } else {
-                const orders = await this.service.getOrdersByCustomer(Number(req.query.customer));
-                if (orders) {
-                    res.send(orders);
-                } else {
-                    res.status(400).send({
-                        success: false,
-                        message: 'orders not found'
-                    });
-                }
             }
         } catch (e) {
             next(e);
@@ -72,14 +56,54 @@ export class OrderController {
             if (!req.query.manager) {
                 next();
             } else {
-                const orders = await this.service.getOrdersByManager(Number(req.query.manager));
-                if (orders) {
-                    res.send(orders);
-                } else {
+                const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
+                const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+                const manager = await this.authService.getUserByIdAndRole(Number(req.query.manager), ERole.manager);
+                if (!manager) {
                     res.status(400).send({
                         success: false,
-                        message: 'orders not found'
+                        message: 'there is no such manager'
                     });
+                } else {
+                    const orders = await this.service.getOrdersByManager(manager.id, offset, limit);
+                    if (orders) {
+                        res.send(orders);
+                    } else {
+                        res.status(400).send({
+                            success: false,
+                            message: 'orders not found'
+                        });
+                    }
+                }
+            }
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    getOrdersByCustomer: RequestHandler = async (req, res, next): Promise<void> => {
+        try {
+            if (!req.query.customer) {
+                next();
+            } else {
+                const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
+                const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+                const customer = await this.authService.getUserByIdAndRole(Number(req.query.customer), ERole.customer);
+                if (!customer) {
+                    res.status(400).send({
+                        success: false,
+                        message: 'there is no such customer'
+                    });
+                } else {
+                    const orders = await this.service.getOrdersByCustomer(customer.id, offset, limit);
+                    if (orders) {
+                        res.send(orders);
+                    } else {
+                        res.status(400).send({
+                            success: false,
+                            message: 'orders not found'
+                        });
+                    }
                 }
             }
         } catch (e) {

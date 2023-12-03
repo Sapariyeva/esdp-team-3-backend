@@ -1,6 +1,6 @@
 import { createClient } from "redis"
 
-class Redisservice {
+class RedisService {
     public client = createClient();
     constructor() {
         this.init().then(() => {
@@ -13,4 +13,4 @@ class Redisservice {
     }
 }
 
-export const redisClient = new Redisservice().client
+export const redisClient = new RedisService().client

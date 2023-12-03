@@ -15,6 +15,14 @@ export class AuthService {
         this.repository = new UserRepository();
     }
 
+    getUserById = async (id: number): Promise<IUser | null> => {
+        return await this.repository.getUserById(id);
+    }
+
+    getUserByIdAndRole = async (id: number, role: ERole): Promise<IUser | null> => {
+        return await this.repository.getUserByIdAndRole(id, role);
+    }
+
     getUserByPhoneAndRole = async (phone: string, role: ERole): Promise<IUser | null> => {
         return await this.repository.getUserByPhoneAndRole(phone, role);
     }
