@@ -1,7 +1,8 @@
 import { OrderRepository } from '../repositories/order.repository';
 import { IOrder } from '../interfaces/IOrder.interface';
-import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
+
 import { OrderDto } from '../dto/order.dto';
+import { EOrderStatus } from '../enum/EOrderStatus.enum';
 
 export class OrderService {
     private repository: OrderRepository;
@@ -32,6 +33,10 @@ export class OrderService {
 
     createOrder = async (orderDto: OrderDto): Promise<IOrder | null> => {
         return await this.repository.createOrder(orderDto);
+    }
+
+    cancelOrder = async (id: number): Promise<IOrder | null> => {
+        return await this.repository.cancelOrder(id);
     }
 
     changeOrderStatus = async (id: number, status: EOrderStatus): Promise<IOrder | null> => {

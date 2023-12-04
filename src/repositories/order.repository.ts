@@ -2,8 +2,8 @@ import { Repository } from 'typeorm';
 import { appDataSource } from '../dataSource';
 import { Order } from '../entities/order.entity';
 import { IOrder } from '../interfaces/IOrder.interface';
-import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
 import { OrderDto } from '../dto/order.dto';
+import { EOrderStatus } from '../enum/EOrderStatus.enum';
 
 export class OrderRepository extends Repository<Order> {
     constructor() {
@@ -52,6 +52,15 @@ export class OrderRepository extends Repository<Order> {
         order.status = EOrderStatus.IN_PROGRESS;
         const savedOrder = await this.save(order);
         return savedOrder;
+    }
+
+    async cancelOrder(id: number): Promise<IOrder | null> {
+        const updatedOrder = await this.update({ id }, { status: EOrderStatus.CANCELED });
+        if (updatedOrder.affected && updatedOrder.affected > 0) {
+            return updatedOrder.raw[0] as IOrder;
+        } else {
+            return null;
+        }
     }
 
     async changeOrderStatus(id: number, status: EOrderStatus): Promise<IOrder | null> {

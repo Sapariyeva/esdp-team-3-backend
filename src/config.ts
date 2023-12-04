@@ -5,6 +5,7 @@ import { UserFactory } from "./db/factories/user.factory";
 import MainSeeder from "./db/seeds/main.seeder";
 import { Order } from "./entities/order.entity";
 import { Service } from "./entities/service.entity";
+import { PerformerOrder } from "./entities/performerOrder.entity";
 
 export const appDBConnect: DataSourceOptions & SeederOptions = {
     type: 'mysql',
@@ -18,7 +19,8 @@ export const appDBConnect: DataSourceOptions & SeederOptions = {
     entities: [
         User,
         Service,
-        Order
+        Order,
+        PerformerOrder
     ],
     seeds: [
         MainSeeder,

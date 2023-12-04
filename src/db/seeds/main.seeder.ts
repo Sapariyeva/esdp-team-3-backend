@@ -1,7 +1,8 @@
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { User } from '../../entities/user.entity';
-import { ERole } from '../../interfaces/ERole.enum';
+import { ERole } from '../../enum/ERole.enum';
+
 
 export default class MainSeeder implements Seeder {
     public async run(dataSource: DataSource, factoryManager: SeederFactoryManager): Promise<void> {

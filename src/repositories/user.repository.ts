@@ -7,6 +7,8 @@ import { SignInUserDto } from '../dto/signInUser.dto';
 import { RegisterUserDto } from '../dto/registerUser.dto';
 import bcrypt from 'bcrypt';
 import { RegisterUserByManagerDto } from '../dto/registerUserByManager.dto';
+import { ERole } from '../enum/ERole.enum';
+
 
 export class UserRepository extends Repository<User> {
     constructor() {
@@ -16,6 +18,12 @@ export class UserRepository extends Repository<User> {
     async getUserByToken(token: string): Promise<User | null> {
         return await this.findOne({
             where: { token }
+        })
+    }
+
+    async getUserByPhone(phone: string, role: ERole): Promise<User | null> {
+        return await this.findOne({
+            where: { phone, role }
         })
     }
 
