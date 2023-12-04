@@ -3,6 +3,7 @@ import logger from './middlewares/logger';
 import cors from 'cors';
 import { AuthRoute } from './routes/auth.route.ts';
 import { OrderRoute } from './routes/order.route';
+import { PerformerOrderRoute } from './routes/performerOrder.route';
 
 const app = new App({
   port: 8000,
@@ -10,6 +11,7 @@ const app = new App({
   routes: [
     new AuthRoute(),
     new OrderRoute(),
+    new PerformerOrderRoute()
   ],
 });
 

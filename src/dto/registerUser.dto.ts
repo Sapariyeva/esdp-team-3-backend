@@ -13,13 +13,13 @@ export class RegisterUserDto {
   @IsNotEmpty()
   phone!: string;
 
-  @Expose()
-  @IsString()
-  @IsNotEmpty()
-  password!: string;
+	@Expose()
+	@IsString()
+	@IsNotEmpty()
+	password!: string;
 
-  @Expose()
-  @IsString()
-  @IsNotEmpty()
-  role!: ERole;
+	@Expose()
+	@IsString()
+	@IsNotEmpty()
+	role!: ERole;
 }
