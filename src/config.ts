@@ -5,6 +5,8 @@ import { UserFactory } from "./db/factories/user.factory";
 import MainSeeder from "./db/seeds/main.seeder";
 import { Order } from "./entities/order.entity";
 import { Service } from "./entities/service.entity";
+import { ServiceFactory } from "./db/factories/service.factory";
+import { OrderFactory } from "./db/factories/order.factory";
 
 export const appDBConnect: DataSourceOptions & SeederOptions = {
     type: 'mysql',
@@ -25,5 +27,7 @@ export const appDBConnect: DataSourceOptions & SeederOptions = {
     ],
     factories: [
         UserFactory,
+        ServiceFactory,
+        OrderFactory
     ]
 }

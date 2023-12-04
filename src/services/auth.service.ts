@@ -2,7 +2,7 @@ import { SignInUserDto } from '../dto/signInUser.dto';
 import { RegisterUserDto } from '../dto/registerUser.dto';
 import { IUser, IUserWithoutPass } from '../interfaces/IUser.interface';
 import { UserRepository } from '../repositories/user.repository';
-import { ERole } from '../interfaces/ERole.enum';
+import { ERole } from '../enum/ERole.enum';
 import { nanoid } from 'nanoid';
 import { redisClient } from './redis.service';
 import { UserWithRoleDto } from '../dto/userWithRole.dto';
@@ -13,6 +13,14 @@ export class AuthService {
 
     constructor() {
         this.repository = new UserRepository();
+    }
+
+    getUserById = async (id: number): Promise<IUser | null> => {
+        return await this.repository.getUserById(id);
+    }
+
+    getUserByIdAndRole = async (id: number, role: ERole): Promise<IUser | null> => {
+        return await this.repository.getUserByIdAndRole(id, role);
     }
 
     getUserByPhoneAndRole = async (phone: string, role: ERole): Promise<IUser | null> => {

@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { ERole } from '../interfaces/ERole.enum';
+import { ERole } from '../enum/ERole.enum';
 
 export class RegisterUserDto {
   @Expose()
