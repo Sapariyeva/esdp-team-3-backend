@@ -7,16 +7,19 @@ import { PerformerOrderService } from '../services/performerOrder.service';
 import { PerformerOrderRepository } from '../repositories/performerOrder.repository';
 import { OrderRejectionDto } from '../dto/orderRejection.dto';
 import { OrderRepository } from '../repositories/order.repository';
+import { UserRepository } from '../repositories/user.repository';
 
 export class PerformerOrderController {
 	private repository: PerformerOrderRepository;
 	private service: PerformerOrderService;
 	private orderRepository: OrderRepository;
+  private userRepository:UserRepository;
 
 	constructor() {
 		this.repository = new PerformerOrderRepository();
 		this.service = new PerformerOrderService(this.repository);
 		this.orderRepository = new OrderRepository();
+    this.userRepository = new UserRepository();
 	}
 
 	respondToOrder: RequestHandler = async (req, res, next): Promise<void> => {
@@ -29,7 +32,13 @@ export class PerformerOrderController {
 					message: 'there is no such order'
 				});
 			}
-			// добавить проверку наличия такого исполнителя
+      const user = await this.userRepository.findOne({ where: { id: responseDto.performer_id } });
+      if (!user) {
+        res.status(400).send({
+          success: false,
+          message: 'there is no such user'
+        });
+      }
 			const orderResponse = await this.service.respondToOrder(responseDto);
 			res.send(orderResponse);
 		} catch (e) {
