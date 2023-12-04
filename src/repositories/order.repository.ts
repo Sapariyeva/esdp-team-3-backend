@@ -2,8 +2,8 @@ import { Repository } from 'typeorm';
 import { appDataSource } from '../dataSource';
 import { Order } from '../entities/order.entity';
 import { IOrder } from '../interfaces/IOrder.interface';
-import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
 import { OrderDto } from '../dto/order.dto';
+import { EOrderStatus } from '../enum/EOrderStatus.enum';
 
 export class OrderRepository extends Repository<Order> {
     constructor() {

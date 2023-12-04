@@ -7,7 +7,8 @@ import { SignInUserDto } from '../dto/signInUser.dto';
 import { RegisterUserDto } from '../dto/registerUser.dto';
 import bcrypt from 'bcrypt';
 import { RegisterUserByManagerDto } from '../dto/registerUserByManager.dto';
-import { ERole } from '../interfaces/ERole.enum';
+import { ERole } from '../enum/ERole.enum';
+
 
 export class UserRepository extends Repository<User> {
     constructor() {

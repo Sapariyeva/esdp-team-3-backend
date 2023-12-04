@@ -1,5 +1,4 @@
-import { EOrderStatus } from "./EOrderStatus.enum";
-
+import { EOrderStatus } from "../enum/EOrderStatus.enum";
 export interface IOrder {
     id: number;
     customer_id: number;

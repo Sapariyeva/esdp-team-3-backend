@@ -1,9 +1,8 @@
 import { Router } from "express";
 import { IRoute } from '../interfaces/IRoute.interface';
-
 import { roleChecker } from "../middlewares/roleChecker";
-import { ERole } from "../interfaces/ERole.enum";
 import { PerformerOrderController } from "../controllers/performerOrder.controller";
+import { ERole } from "../enum/ERole.enum";
 
 export class PerformerOrderRoute implements IRoute {
 	public path = '/performerOrder';

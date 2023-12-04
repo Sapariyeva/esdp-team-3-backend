@@ -3,7 +3,8 @@ import { RegisterUserDto } from '../dto/registerUser.dto';
 import { IUser } from '../interfaces/IUser.interface';
 import { UserRepository } from '../repositories/user.repository';
 import { RegisterUserByManagerDto } from '../dto/registerUserByManager.dto';
-import { ERole } from '../interfaces/ERole.enum';
+import { ERole } from '../enum/ERole.enum';
+
 
 export class AuthService {
     private repository: UserRepository;

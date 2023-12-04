@@ -2,8 +2,8 @@ import { Column, PrimaryGeneratedColumn, Entity, Unique } from 'typeorm';
 import { IUser } from '../interfaces/IUser.interface';
 import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt'
-import { ERole } from '../interfaces/ERole.enum';
-import { EUserStatus } from '../interfaces/EUserStatus.enum';
+import { ERole } from '../enum/ERole.enum';
+import { EUserStatus } from '../enum/EUserStatus.enum';
 
 @Entity()
 @Unique(['username'])

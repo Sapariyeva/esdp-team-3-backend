@@ -2,9 +2,9 @@ import { RequestHandler } from "express";
 import { OrderService } from "../services/order.service";
 import { OrderDto } from "../dto/order.dto";
 import { plainToInstance } from "class-transformer";
-import { ERole } from "../interfaces/ERole.enum";
 import { AuthService } from "../services/auth.service";
 import { RegisterUserByManagerDto } from "../dto/registerUserByManager.dto";
+import { ERole } from "../enum/ERole.enum";
 
 export class OrderController {
     private service: OrderService;

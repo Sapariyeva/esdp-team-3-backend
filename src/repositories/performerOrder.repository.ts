@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import { appDataSource } from '../dataSource';
 import { PerformerOrder } from '../entities/performerOrder.entity';
 import { IPerformerOrder } from '../interfaces/IPerformerOrder.interface';
-import { EPerformerOrderStatus } from '../interfaces/EPerformerOrderStatus.enum';
+import { EPerformerOrderStatus } from '../enum/EPerformerOrderStatus.enum';
 import { OrderResponseDto } from '../dto/orderResponse.dto';
 
 export class PerformerOrderRepository extends Repository<PerformerOrder> {

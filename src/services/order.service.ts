@@ -1,7 +1,8 @@
 import { OrderRepository } from '../repositories/order.repository';
 import { IOrder } from '../interfaces/IOrder.interface';
-import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
+
 import { OrderDto } from '../dto/order.dto';
+import { EOrderStatus } from '../enum/EOrderStatus.enum';
 
 export class OrderService {
     private repository: OrderRepository;

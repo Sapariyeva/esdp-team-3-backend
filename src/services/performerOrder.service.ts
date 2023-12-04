@@ -4,7 +4,7 @@ import { CompletionNotificationDto } from '../dto/completionNotification.dto';
 import { PerformerOrderRepository } from '../repositories/performerOrder.repository';
 import { OrderRejectionDto } from '../dto/orderRejection.dto';
 import { IPerformerOrder } from '../interfaces/IPerformerOrder.interface';
-import { EPerformerOrderStatus } from '../interfaces/EPerformerOrderStatus.enum';
+import { EPerformerOrderStatus } from '../enum/EPerformerOrderStatus.enum';
 import { validate } from 'class-validator';
 
 export class PerformerOrderService {

@@ -1,7 +1,7 @@
 import { Column, PrimaryGeneratedColumn, Entity, Unique, ManyToOne, JoinColumn } from 'typeorm';
 import { IPerformerOrder } from '../interfaces/IPerformerOrder.interface';
 import { User } from './user.entity';
-import { EPerformerOrderStatus } from '../interfaces/EPerformerOrderStatus.enum';
+import { EPerformerOrderStatus } from '../enum/EPerformerOrderStatus.enum';
 import { Order } from './order.entity';
 
 @Entity()

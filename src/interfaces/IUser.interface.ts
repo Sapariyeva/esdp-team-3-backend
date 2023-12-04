@@ -1,5 +1,6 @@
-import { ERole } from "./ERole.enum";
-import { EUserStatus } from "./EUserStatus.enum";
+import { ERole } from "../enum/ERole.enum";
+import { EUserStatus } from "../enum/EUserStatus.enum";
+
 
 export interface IUser {
     id: number;
