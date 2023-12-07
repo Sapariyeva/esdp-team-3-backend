@@ -15,8 +15,10 @@ export class PerformerOrderRoute implements IRoute {
 	}
 
 	private init() {
-		this.router.patch('/', roleChecker([ERole.admin, ERole.manager, ERole.performer]), this.controller.respondToOrder);
-		this.router.patch('/:id/cancel', roleChecker([ERole.admin, ERole.manager, ERole.performer]), this.controller.rejectOrder);
+		this.router.post('/', roleChecker([ERole.admin, ERole.manager, ERole.performer]), this.controller.respondToOrder);
+        this.router.patch('/:id/delete', roleChecker([ERole.admin, ERole.manager, ERole.performer]), this.controller.deleteOrder);
+		this.router.patch('/:id/block', roleChecker([ERole.admin, ERole.manager, ERole.performer]), this.controller.rejectOrder);
+        this.router.patch('/:id/notifyStart', roleChecker([ERole.admin, ERole.manager, ERole.performer]), this.controller.notifyStart);
 		this.router.patch('/:id/notifyArrival', roleChecker([ERole.admin, ERole.manager, ERole.performer]), this.controller.notifyArrival);
 		this.router.patch('/:id/notifyCompletion', roleChecker([ERole.admin, ERole.manager, ERole.performer]), this.controller.notifyCompletion);
 	}
