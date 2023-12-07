@@ -20,47 +20,62 @@ export class PerformerOrderService {
 		return await this.repository.createPerformerOrder(responseDto);
 	}
 
-	deletePerformerOrder = async (deletionDto: OrderRejectionDto): Promise<void> => {
-		const errors = await validate(deletionDto);
-		if (errors.length) throw errors;
-		const { order_id, performer_id } = deletionDto;
+    deletePerformerOrder = async (deletionDto: OrderRejectionDto): Promise<void> => {
+        const errors = await validate(deletionDto);
+        if (errors.length) throw errors;
+        const { id } = deletionDto;
+        await this.repository.delete({ id });
+        console.log(`PerformerOrder with id: ${id} has been deleted.`);
+    }
 
-		await this.repository.delete({ order_id, performer_id });
+    rejectOrder = async (rejectionDto: OrderRejectionDto): Promise<IPerformerOrder | null> => {
+        const errors = await validate(rejectionDto);
+        if (errors.length) throw errors;
+        const { id } = rejectionDto;
+        const performerOrder = await this.repository.updatePerformerOrderStatus(id, EPerformerOrderStatus.BANNED);
+        console.log(performerOrder)
+        return performerOrder;
+    }
 
-		console.log(`PerformerOrder with order_id: ${order_id} and performer_id: ${performer_id} has been deleted.`);
-	}
+    notifyArrival = async (arrivalDto: ArrivalNotificationDto): Promise<IPerformerOrder | null> => {
+        const errors = await validate(arrivalDto);
+        if (errors.length) throw errors;
 
-	rejectOrder = async (rejectionDto: OrderRejectionDto): Promise<IPerformerOrder | null> => {
-		const errors = await validate(rejectionDto);
-		if (errors.length) throw errors;
-		const { order_id, performer_id } = rejectionDto;
-		const performerOrder = await this.repository.updatePerformerOrderStatus(order_id, performer_id, EPerformerOrderStatus.BANNED);
-		console.log(performerOrder)
-		return performerOrder;
-	}
+        const { id } = arrivalDto;
 
-	notifyArrival = async (arrivalDto: ArrivalNotificationDto): Promise<IPerformerOrder | null> => {
-		const errors = await validate(arrivalDto);
-		if (errors.length) throw errors;
+        const updatedOrder = await this.repository.updatePerformerOrderStatus(id, EPerformerOrderStatus.AWAITING_CONFIRMATION);
+        return updatedOrder;
+    }
 
-		const { order_id, performer_id } = arrivalDto;
+    notifyStart = async (startDto: CompletionNotificationDto): Promise<IPerformerOrder | null> => {
+        const errors = await validate(startDto);
+        if (errors.length) throw errors;
 
-		const updatedOrder = await this.repository.updatePerformerOrderStatus(order_id, performer_id, EPerformerOrderStatus.AWAITING_CONFIRMATION);
-		return updatedOrder;
-	}
+        const { id } = startDto;
+        const start = new Date().toISOString();
+        let updatedOrder = await this.repository.updatePerformerOrderStart(id, start);
 
-	notifyCompletion = async (completionDto: CompletionNotificationDto): Promise<IPerformerOrder | null> => {
-		const errors = await validate(completionDto);
-		if (errors.length) throw errors;
+        if (updatedOrder) {
+            updatedOrder.status = EPerformerOrderStatus.IN_PROGRESS;
+            await this.repository.save(updatedOrder);
+        }
 
-		const { order_id, performer_id, end } = completionDto;
-		let updatedOrder = await this.repository.updatePerformerOrderEnd(order_id, performer_id, end);
+        return updatedOrder;
+    }
 
-		if (updatedOrder) {
-			updatedOrder.status = EPerformerOrderStatus.DONE;
-			await this.repository.save(updatedOrder);
-		}
+    notifyCompletion = async (completionDto: CompletionNotificationDto): Promise<IPerformerOrder | null> => {
+        const errors = await validate(completionDto);
+        if (errors.length) throw errors;
 
-		return updatedOrder;
-	}
+        const { id } = completionDto;
+        const end = new Date().toISOString();
+        let updatedOrder = await this.repository.updatePerformerOrderEnd(id, end);
+
+        if (updatedOrder) {
+            updatedOrder.status = EPerformerOrderStatus.DONE;
+            await this.repository.save(updatedOrder);
+        }
+
+        return updatedOrder;
+    }
 }
