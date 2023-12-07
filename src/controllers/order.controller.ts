@@ -33,9 +33,9 @@ export class OrderController {
 
     getOrders: RequestHandler = async (req, res, next): Promise<void> => {
         try {
-            let manager_id = null;
-            let customer_id = null;
-            let performer_id = null;
+            let managerId = null;
+            let customerId = null;
+            let performerId = null;
             const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
             const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
             if (req.query.manager) {
@@ -46,7 +46,7 @@ export class OrderController {
                         message: 'there is no such manager'
                     });
                 } else {
-                    manager_id = manager.id;
+                    managerId = manager.id;
                 }
             }
             if (req.query.customer) {
@@ -57,7 +57,7 @@ export class OrderController {
                         message: 'there is no such customer'
                     });
                 } else {
-                    customer_id = customer.id;
+                    customerId = customer.id;
                 }
             }
             if (req.query.performer) {
@@ -68,10 +68,10 @@ export class OrderController {
                         message: 'there is no such performer'
                     });
                 } else {
-                    performer_id = performer.id;
+                    performerId = performer.id;
                 }
             }
-            const params = { offset, limit, manager_id, customer_id, performer_id };
+            const params = { offset, limit, managerId, customerId, performerId };
             console.log('test')
             const result = await this.service.getOrders(params);
 
@@ -93,9 +93,9 @@ export class OrderController {
             const orderDto = plainToInstance(OrderDto, req.body);
             if (req.app.locals.user.role === ERole.manager || req.app.locals.user.role === ERole.admin) {
                 // Если заказ создает менеджер
-                orderDto.manager_id = req.app.locals.user.id;
-                if (!orderDto.customer_id) {
-                    if (!orderDto.display_name || !orderDto.phone) {
+                orderDto.managerId = req.app.locals.user.id;
+                if (!orderDto.customerId) {
+                    if (!orderDto.displayName || !orderDto.phone) {
                         res.status(400).send({
                             success: false,
                             message: 'No client was selected'
@@ -109,15 +109,15 @@ export class OrderController {
                         const registerUserByManager = plainToInstance(UserWithRoleDto, req.body);
                         registerUserByManager.role = ERole.customer;
                         const createdCustomer = await this.authService.addUser(registerUserByManager);
-                        orderDto.customer_id = createdCustomer.id;
+                        orderDto.customerId = createdCustomer.id;
                     } else {
-                        orderDto.customer_id = user.id;
+                        orderDto.customerId = user.id;
                     }
                 }
             } else {
                 // Если заказ создает клиент
-                orderDto.customer_id = req.app.locals.user.id;
-                orderDto.manager_id = 1;
+                orderDto.customerId = req.app.locals.user.id;
+                orderDto.managerId = 1;
             }
             const createdOrder = await this.service.createOrder(orderDto);
             if (createdOrder) {

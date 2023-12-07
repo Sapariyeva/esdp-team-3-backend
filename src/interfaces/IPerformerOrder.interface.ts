@@ -3,12 +3,12 @@ import { EPerformerOrderStatus } from "../enum/EPerformerOrderStatus.enum";
 
 export interface IPerformerOrder {
 	id: number;
-	performer_id: number;
-	order_id: number;
+	performerId: number;
+	orderId: number;
 	start: string;
 	end: string;
 	status: EPerformerOrderStatus;
-	performer_rating: number;
-	customer_rating: number;
+	performerRating: number;
+	customerRating: number;
 	performer: User
 }

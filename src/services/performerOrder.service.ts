@@ -20,6 +20,7 @@ export class PerformerOrderService {
 		return await this.repository.createPerformerOrder(responseDto);
 	}
 
+
     deletePerformerOrder = async (deletionDto: OrderRejectionDto): Promise<void> => {
         const errors = await validate(deletionDto);
         if (errors.length) throw errors;
@@ -43,9 +44,11 @@ export class PerformerOrderService {
 
         const { id } = arrivalDto;
 
+
         const updatedOrder = await this.repository.updatePerformerOrderStatus(id, EPerformerOrderStatus.AWAITING_CONFIRMATION);
         return updatedOrder;
     }
+
 
     notifyStart = async (startDto: CompletionNotificationDto): Promise<IPerformerOrder | null> => {
         const errors = await validate(startDto);
@@ -55,13 +58,16 @@ export class PerformerOrderService {
         const start = new Date().toISOString();
         let updatedOrder = await this.repository.updatePerformerOrderStart(id, start);
 
+
         if (updatedOrder) {
             updatedOrder.status = EPerformerOrderStatus.IN_PROGRESS;
             await this.repository.save(updatedOrder);
         }
 
+
         return updatedOrder;
     }
+
 
     notifyCompletion = async (completionDto: CompletionNotificationDto): Promise<IPerformerOrder | null> => {
         const errors = await validate(completionDto);

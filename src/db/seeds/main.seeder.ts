@@ -20,18 +20,18 @@ export default class MainSeeder implements Seeder {
 
         const manager1 = await userFactory.save({ role: ERole.manager });
         managers.push(manager1);
-        const { phone, display_name } = manager1;
+        const { phone, displayName } = manager1;
 
         const newManagers = await userFactory.saveMany(3, { role: ERole.manager });
         newManagers.forEach(manager => managers.push(manager));
 
-        const customer1 = await userFactory.save({ phone, display_name, role: ERole.customer });
+        const customer1 = await userFactory.save({ phone, displayName, role: ERole.customer });
         customers.push(customer1);
 
         const newCustomers = await userFactory.saveMany(4, { role: ERole.customer });
         newCustomers.forEach(customer => customers.push(customer));
 
-        const performer1 = await userFactory.save({ phone, display_name, role: ERole.performer });
+        const performer1 = await userFactory.save({ phone, displayName, role: ERole.performer });
         performers.push(performer1);
 
         const newPerformers = await userFactory.saveMany(6, { role: ERole.performer });
@@ -46,8 +46,8 @@ export default class MainSeeder implements Seeder {
 
         for (let i = 0; i < 100; i++) {
             await orderFactory.save({
-                customer_id: customers[Math.floor(Math.random() * customers.length)].id,
-                manager_id: managers[Math.floor(Math.random() * managers.length)].id,
+                customerId: customers[Math.floor(Math.random() * customers.length)].id,
+                managerId: managers[Math.floor(Math.random() * managers.length)].id,
             })
         }
     }

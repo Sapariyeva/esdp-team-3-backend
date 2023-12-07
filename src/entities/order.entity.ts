@@ -10,24 +10,24 @@ export class Order implements IOrder {
 	id!: number
 
 	@Column()
-	customer_id!: number
+	customerId!: number
 
 	@ManyToOne(() => User)
-	@JoinColumn({ name: 'customer_id' })
+	@JoinColumn({ name: 'customerId' })
 	customer!: User
 
 	@Column()
-	service_id!: number
+	serviceId!: number
 
 	@ManyToOne(() => Service)
-	@JoinColumn({ name: 'service_id' })
+	@JoinColumn({ name: 'serviceId' })
 	service!: Service
 
 	@Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-	created_at!: string
+	createdAt!: string
 
 	@Column()
-	order_data!: string
+	orderData!: string
 
 	@Column()
 	address!: string
@@ -36,16 +36,16 @@ export class Order implements IOrder {
 	description!: string
 
 	@Column()
-	performers_quantity!: number
+	performersQuantity!: number
 
 	@Column({ nullable: true })
-	time_worked!: number
+	timeWorked!: number
 
 	@Column({ nullable: true })
 	income!: number
 
 	@Column({ nullable: true })
-	performer_payment!: number
+	performerPayment!: number
 
 	@Column({ nullable: true })
 	tax!: number
@@ -60,10 +60,10 @@ export class Order implements IOrder {
 	lng!: number
 
 	@Column({ nullable: true })
-	manager_id!: number
+	managerId!: number
 
 	@Column({ nullable: true })
-	manager_commentary!: string
+	managerCommentary!: string
 
 	@Column()
 	status!: EOrderStatus

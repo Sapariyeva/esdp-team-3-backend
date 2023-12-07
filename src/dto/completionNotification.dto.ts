@@ -6,4 +6,5 @@ export class CompletionNotificationDto {
     @IsNotEmpty()
     @IsNumber()
     id!: number;
+
 }
