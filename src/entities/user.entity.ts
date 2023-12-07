@@ -11,13 +11,13 @@ export class User implements IUser {
 	id!: number
 
 	@Column()
-	display_name!: string
+	displayName!: string
 
 	@Column()
 	phone!: string
 
-    @Column({ nullable: true })
-    email!: string
+	@Column({ nullable: true })
+	email!: string
 
 	@Column({ nullable: true })
 	password!: string
@@ -31,23 +31,23 @@ export class User implements IUser {
 	@Column()
 	role!: ERole
 
-    @Column({ nullable: true })
-    avg_rating!: number
+	@Column({ nullable: true })
+	avgRating!: number
 
 	@Column({ nullable: true })
-	rating_count!: number
+	ratingCount!: number
 
 	@Column({ nullable: true })
-	last_postition!: string
+	lastPostition!: string
 
 	@Column({ nullable: true })
-	identifying_number!: number
+	identifyingNumber!: string
 
 	@Column({ default: EUserStatus.ACTIVE })
 	status!: EUserStatus
 
-    hashPassword(): void {
-        const salt = bcrypt.genSaltSync(10);
-        this.password = bcrypt.hashSync(this.password, salt);
-    }
+	hashPassword(): void {
+		const salt = bcrypt.genSaltSync(10);
+		this.password = bcrypt.hashSync(this.password, salt);
+	}
 }

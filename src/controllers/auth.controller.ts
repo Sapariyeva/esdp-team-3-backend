@@ -58,27 +58,49 @@ export class AuthController {
 
     signUp: RequestHandler = async (req, res) => {
         try {
-            const registerUserDto = plainToInstance(RegisterUserDto, req.body);
-            const errors = await validate(registerUserDto, {
-                whitelist: true,
-                validationError: {
-                    target: false,
-                    value: false
-                }
-            })
-            if (errors.length > 0) {
+            if (req.body.role === 'performer' && !req.body.birthday) {
                 res.status(400).send({
                     success: false,
-                    message: 'Validation failed',
-                    errors: formatErrors(errors)
+                    message: 'If the role \'performer\' is selected, the \'birthday\' field cannot be left empty.'
                 });
-                return;
+            } else {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const dob = new Date(req.body.birthday);
+                const dobnow = new Date(today.getFullYear(), dob.getMonth(), dob.getDate());
+                let age = today.getFullYear() - dob.getFullYear();
+                if (today < dobnow) {
+                    age = age - 1;
+                }
+                if (age < 18) {
+                    res.status(400).send({
+                        success: false,
+                        message: 'Performer must be at least 18 years old.'
+                    });
+                } else {
+                    const registerUserDto = plainToInstance(RegisterUserDto, req.body);
+                    const errors = await validate(registerUserDto, {
+                        whitelist: true,
+                        validationError: {
+                            target: false,
+                            value: false
+                        }
+                    })
+                    if (errors.length > 0) {
+                        res.status(400).send({
+                            success: false,
+                            message: 'Validation failed',
+                            errors: formatErrors(errors)
+                        });
+                        return;
+                    }
+                    const user = await this.service.signUp(registerUserDto);
+                    res.send({
+                        success: true,
+                        payload: { ...user, password: undefined }
+                    })
+                }
             }
-            const user = await this.service.signUp(registerUserDto);
-            res.send({
-                success: true,
-                payload: { ...user, password: undefined }
-            })
         } catch (e: any) {
             console.log(e);
             if ((e as { code: string }).code === 'ER_DUP_ENTRY') {

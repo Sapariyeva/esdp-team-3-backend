@@ -25,14 +25,14 @@ export class PerformerOrderController {
 	respondToOrder: RequestHandler = async (req, res, next): Promise<void> => {
 		try {
 			const responseDto = plainToInstance(OrderResponseDto, req.body);
-			const order = await this.orderRepository.findOne({ where: { id: responseDto.order_id } });
+			const order = await this.orderRepository.findOne({ where: { id: responseDto.orderId } });
 			if (!order) {
 				res.status(400).send({
 					success: false,
 					message: 'there is no such order'
 				});
 			}
-      const user = await this.userRepository.findOne({ where: { id: responseDto.performer_id } });
+      const user = await this.userRepository.findOne({ where: { id: responseDto.performerId } });
       if (!user) {
         res.status(400).send({
           success: false,

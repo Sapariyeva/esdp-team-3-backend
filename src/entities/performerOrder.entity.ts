@@ -5,23 +5,23 @@ import { EPerformerOrderStatus } from '../enum/EPerformerOrderStatus.enum';
 import { Order } from './order.entity';
 
 @Entity()
-@Unique(['order_id', 'performer_id'])
+@Unique(['orderId', 'performerId'])
 export class PerformerOrder implements IPerformerOrder {
 	@PrimaryGeneratedColumn()
 	id!: number
 
 	@Column()
-	performer_id!: number
+	performerId!: number
 
 	@ManyToOne(() => User)
-	@JoinColumn({ name: 'performer_id' })
+	@JoinColumn({ name: 'performerId' })
 	performer!: User
 
 	@Column()
-	order_id!: number
+	orderId!: number
 
 	@ManyToOne(() => Order)
-	@JoinColumn({ name: 'order_id' })
+	@JoinColumn({ name: 'orderId' })
 	order!: Order
 
 	@Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
@@ -38,8 +38,8 @@ export class PerformerOrder implements IPerformerOrder {
 	status!: EPerformerOrderStatus;
 
 	@Column({ nullable: true })
-	performer_rating!: number
+	performerRating!: number
 
 	@Column({ nullable: true })
-	customer_rating!: number
+	customerRating!: number
 }

@@ -9,17 +9,17 @@ export class OrderDto implements IOrder {
 	@IsNotEmpty()
 	@IsNumber()
 	@Expose()
-	customer_id!: number
+	customerId!: number
 
 	@IsNotEmpty()
 	@IsNumber()
 	@Expose()
-	service_id!: number
+	serviceId!: number
 
 	@IsNotEmpty()
 	@IsString()
 	@Expose()
-	order_data!: string
+	orderData!: string
 
 	@IsNotEmpty()
 	@IsString()
@@ -29,7 +29,7 @@ export class OrderDto implements IOrder {
 	@IsNotEmpty()
 	@IsNumber()
 	@Expose()
-	performers_quantity!: number
+	performersQuantity!: number
 
 	@IsNotEmpty()
 	@IsNumber()
@@ -43,11 +43,11 @@ export class OrderDto implements IOrder {
 
 	@IsNumber()
 	@Expose()
-	manager_id!: number
+	managerId!: number
 
 	@IsString()
 	@Expose()
-	display_name!: string
+	displayName!: string
 
 	@IsString()
 	@Expose()

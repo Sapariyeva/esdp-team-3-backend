@@ -1,21 +1,21 @@
 import { EOrderStatus } from "../enum/EOrderStatus.enum";
 export interface IOrder {
     id: number;
-    customer_id: number;
-    service_id: number;
-    created_at?: string;
-    order_data: string;
+    customerId: number;
+    serviceId: number;
+    createdAt?: string;
+    orderData: string;
     address: string;
     description?: string;
-    performers_quantity: number;
-    time_worked?: number;
+    performersQuantity: number;
+    timeWorked?: number;
     income?: number;
-    performer_payment?: number;
+    performerPayment?: number;
     tax?: number;
     profit?: number;
     lat: number;
     lng: number;
-    manager_id?: number;
-    manager_commentary?: string;
+    managerId?: number;
+    managerCommentary?: string;
     status?: EOrderStatus;
 }

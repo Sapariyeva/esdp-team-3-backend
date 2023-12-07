@@ -23,18 +23,18 @@ export class PerformerOrderService {
 	deletePerformerOrder = async (deletionDto: OrderRejectionDto): Promise<void> => {
 		const errors = await validate(deletionDto);
 		if (errors.length) throw errors;
-		const { order_id, performer_id } = deletionDto;
+		const { orderId, performerId } = deletionDto;
 
-		await this.repository.delete({ order_id, performer_id });
+		await this.repository.delete({ orderId, performerId });
 
-		console.log(`PerformerOrder with order_id: ${order_id} and performer_id: ${performer_id} has been deleted.`);
+		console.log(`PerformerOrder with orderId: ${orderId} and performerId: ${performerId} has been deleted.`);
 	}
 
 	rejectOrder = async (rejectionDto: OrderRejectionDto): Promise<IPerformerOrder | null> => {
 		const errors = await validate(rejectionDto);
 		if (errors.length) throw errors;
-		const { order_id, performer_id } = rejectionDto;
-		const performerOrder = await this.repository.updatePerformerOrderStatus(order_id, performer_id, EPerformerOrderStatus.BANNED);
+		const { orderId, performerId } = rejectionDto;
+		const performerOrder = await this.repository.updatePerformerOrderStatus(orderId, performerId, EPerformerOrderStatus.BANNED);
 		console.log(performerOrder)
 		return performerOrder;
 	}
@@ -43,9 +43,9 @@ export class PerformerOrderService {
 		const errors = await validate(arrivalDto);
 		if (errors.length) throw errors;
 
-		const { order_id, performer_id } = arrivalDto;
+		const { orderId, performerId } = arrivalDto;
 
-		const updatedOrder = await this.repository.updatePerformerOrderStatus(order_id, performer_id, EPerformerOrderStatus.AWAITING_CONFIRMATION);
+		const updatedOrder = await this.repository.updatePerformerOrderStatus(orderId, performerId, EPerformerOrderStatus.AWAITING_CONFIRMATION);
 		return updatedOrder;
 	}
 
@@ -53,8 +53,8 @@ export class PerformerOrderService {
 		const errors = await validate(completionDto);
 		if (errors.length) throw errors;
 
-		const { order_id, performer_id, end } = completionDto;
-		let updatedOrder = await this.repository.updatePerformerOrderEnd(order_id, performer_id, end);
+		const { orderId, performerId, end } = completionDto;
+		let updatedOrder = await this.repository.updatePerformerOrderEnd(orderId, performerId, end);
 
 		if (updatedOrder) {
 			updatedOrder.status = EPerformerOrderStatus.DONE;

@@ -5,12 +5,12 @@ export class CompletionNotificationDto {
 	@Expose()
 	@IsNotEmpty()
 	@IsNumber()
-	order_id!: number;
+	orderId!: number;
 
 	@Expose()
 	@IsNotEmpty()
 	@IsNumber()
-	performer_id!: number;
+	performerId!: number;
 
 	@Expose()
 	@IsNotEmpty()

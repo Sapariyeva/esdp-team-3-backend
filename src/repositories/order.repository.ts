@@ -13,22 +13,22 @@ export class OrderRepository extends Repository<Order> {
     }
 
     async getOrders(params: IGetOrderParams): Promise<IOrderList> {
-        const { offset, limit, manager_id, customer_id, performer_id } = params;
+        const { offset, limit, managerId, customerId, performerId } = params;
 
         const queryBuilder = this.createQueryBuilder("order");
 
-        if (manager_id !== null) {
-            queryBuilder.andWhere("order.manager_id = :manager_id", { manager_id });
+        if (managerId !== null) {
+            queryBuilder.andWhere("order.managerId = :managerId", { managerId });
         }
 
-        if (customer_id !== null) {
-            queryBuilder.andWhere("order.customer_id = :customer_id", { customer_id });
+        if (customerId !== null) {
+            queryBuilder.andWhere("order.customerId = :customerId", { customerId });
         }
 
         // Раскомментировать когда будет готов performerOrder
-        // if (performer_id !== null) {
-        //     queryBuilder.innerJoin("performer_order", "po", "po.order_id = order.id")
-        //         .andWhere("po.performer_id = :performer_id", { performer_id });
+        // if (performerId !== null) {
+        //     queryBuilder.innerJoin("performer_order", "po", "po.orderId = order.id")
+        //         .andWhere("po.performerId = :performerId", { performerId });
         // }
 
         const totalItems = await queryBuilder.getCount();
@@ -37,9 +37,9 @@ export class OrderRepository extends Repository<Order> {
             totalItems,
             offset,
             limit,
-            manager: manager_id,
-            customer: customer_id,
-            performer: performer_id
+            manager: managerId,
+            customer: customerId,
+            performer: performerId
         });
 
         return { orders, totalItems, totalPages: Math.ceil(totalItems / limit), links };
@@ -80,13 +80,13 @@ export class OrderRepository extends Repository<Order> {
     async createOrder(data: OrderDto): Promise<IOrder> {
         const order = new Order();
         order.address = data.address;
-        order.customer_id = data.customer_id;
-        order.service_id = data.service_id
-        order.order_data = data.order_data;
-        order.performers_quantity = data.performers_quantity;
+        order.customerId = data.customerId;
+        order.serviceId = data.serviceId
+        order.orderData = data.orderData;
+        order.performersQuantity = data.performersQuantity;
         order.lat = data.lat;
         order.lng = data.lng;
-        order.manager_id = data.manager_id;
+        order.managerId = data.managerId;
         order.status = EOrderStatus.IN_PROGRESS;
         const savedOrder = await this.save(order);
         return savedOrder;

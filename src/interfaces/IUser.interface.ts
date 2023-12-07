@@ -4,15 +4,15 @@ import { EUserStatus } from "../enum/EUserStatus.enum";
 export interface IUserWithoutPass {
     id: number;
     phone: string;
-    display_name: string;
+    displayName: string;
     email: string;
     birthday: string;
     avatar: string;
     role: ERole;
-    avg_rating: number;
-    rating_count: number;
-    last_postition: string;
-    identifying_number: number;
+    avgRating: number;
+    ratingCount: number;
+    lastPostition: string;
+    identifyingNumber: string;
     status: EUserStatus;
 }
 

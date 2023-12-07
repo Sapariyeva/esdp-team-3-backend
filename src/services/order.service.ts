@@ -16,8 +16,8 @@ export class OrderService {
         return await this.repository.getOrders(params);
     }
 
-    getOrderById = async (order_id: number): Promise<IOrder | null> => {
-        return await this.repository.getOrderById(order_id);
+    getOrderById = async (orderId: number): Promise<IOrder | null> => {
+        return await this.repository.getOrderById(orderId);
     }
 
     createOrder = async (orderDto: OrderDto): Promise<IOrder | null> => {
