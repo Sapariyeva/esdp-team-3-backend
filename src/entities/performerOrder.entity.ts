@@ -24,11 +24,11 @@ export class PerformerOrder implements IPerformerOrder {
 	@JoinColumn({ name: 'order_id' })
 	order!: Order
 
-	@Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-	start!: string
+    @Column({ type: "timestamp", nullable: true })
+    start!: string 
 
-	@Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-	end!: string
+    @Column({ type: "timestamp", nullable: true })
+    end!: string 
 
 	@Column({
 		type: "enum",

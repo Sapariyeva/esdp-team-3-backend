@@ -14,16 +14,16 @@ export class PerformerOrderRepository extends Repository<PerformerOrder> {
 	// 	return await this.findOne({ where: { order_id, performer_id } });
 	// }
 
-  async updatePerformerOrderStatus(order_id: number, performer_id: number, status: EPerformerOrderStatus): Promise<IPerformerOrder | null> {
-    const performerOrder = await this.findOne({ where: { order_id: order_id, performer_id: performer_id } });
+    async updatePerformerOrderStatus(id: number, status: EPerformerOrderStatus): Promise<IPerformerOrder | null> {
+        const performerOrder = await this.findOne({ where: { id } });
 
-    if (performerOrder) {
-      performerOrder.status = status;
-      return await this.save(performerOrder);
-    } else {
-      return null;
+        if (performerOrder) {
+            performerOrder.status = status;
+            return await this.save(performerOrder);
+        } else {
+            return null;
+        }
     }
-  }
 
   async createPerformerOrder(data: OrderResponseDto): Promise<IPerformerOrder> {
     const performerOrder = new PerformerOrder();
@@ -33,27 +33,27 @@ export class PerformerOrderRepository extends Repository<PerformerOrder> {
     return await this.save(performerOrder);
   }
 
-  async updatePerformerOrderStart(order_id: number, performer_id: number, start: string): Promise<IPerformerOrder | null> {
-    const performerOrder = await this.findOne({ where: { order_id: order_id, performer_id: performer_id } });
+    async updatePerformerOrderStart(id: number, start: string): Promise<IPerformerOrder | null> {
+        const performerOrder = await this.findOne({ where: { id } });
 
-    if (performerOrder) {
-      performerOrder.start = start;
-      return await this.save(performerOrder);
-    } else {
-      return null;
+        if (performerOrder) {
+            performerOrder.start = start;
+            return await this.save(performerOrder);
+        } else {
+            return null;
+        }
     }
-  }
 
-  async updatePerformerOrderEnd(order_id: number, performer_id: number, end: string): Promise<IPerformerOrder | null> {
-    const performerOrder = await this.findOne({ where: { order_id: order_id, performer_id: performer_id } });
+    async updatePerformerOrderEnd(id: number, end: string): Promise<IPerformerOrder | null> {
+        const performerOrder = await this.findOne({ where: { id } });
 
-    if (performerOrder) {
-      performerOrder.end = end;
-      return await this.save(performerOrder);
-    } else {
-      return null;
+        if (performerOrder) {
+            performerOrder.end = end;
+            return await this.save(performerOrder);
+        } else {
+            return null;
+        }
     }
-  }
 
 
 }
