@@ -6,6 +6,10 @@ import { SignInUserDto } from '../dto/signInUser.dto';
 import { RegisterUserDto } from '../dto/registerUser.dto';
 import { ERole } from '../enum/ERole.enum';
 import { UserWithRoleDto } from '../dto/userWithRole.dto';
+import { IGetUserParams } from '../interfaces/IGetParams';
+import { IUserList } from '../interfaces/IList.interface';
+import { getLinks } from '../helpers/getLinks';
+import { EUserStatus } from '../enum/EUserStatus.enum';
 import bcrypt from 'bcrypt';
 
 export class UserRepository extends Repository<User> {
@@ -13,10 +17,15 @@ export class UserRepository extends Repository<User> {
         super(User, appDataSource.createEntityManager());
     }
 
-    async getUserById(id: number): Promise<IUser | null> {
-        return await this.findOne({
+    async getUserById(id: number): Promise<IUserWithoutPass | null> {
+        const user = await this.findOne({
             where: { id }
         })
+        if (user) {
+            const { password, ...userWithoutPass } = user;
+            return userWithoutPass;
+        }
+        return user
     }
 
     async getUserByIdAndRole(id: number, role: ERole): Promise<IUser | null> {
@@ -31,18 +40,46 @@ export class UserRepository extends Repository<User> {
         })
     }
 
+    async getUsers(params: IGetUserParams): Promise<IUserList> {
+        const { offset, limit, phone, email, role, status } = params;
+
+        const queryBuilder = this.createQueryBuilder("user");
+
+        if (phone) {
+            queryBuilder.andWhere("user.phone = :phone", { phone });
+        }
+
+        if (email) {
+            queryBuilder.andWhere("user.email = :email", { email });
+        }
+
+        if (role) {
+            queryBuilder.andWhere("user.role = :role", { role });
+        }
+
+        if (status) {
+            queryBuilder.andWhere("user.status = :status", { status });
+        }
+
+        const totalItems = await queryBuilder.getCount();
+        const users = await queryBuilder.skip(offset).take(limit).getMany();
+        const links = getLinks({ totalItems, ...params }, 'user');
+
+        return { users, totalItems, totalPages: Math.ceil(totalItems / limit), links };
+    }
+
     async signInWithRole(userDto: UserWithRoleDto): Promise<IUserWithoutPass> {
         const { phone, password, role } = userDto;
         const user = await this.getUserByPhoneAndRole(phone, role);
         if (!user) {
-            throw new Error('user not exist');
+            throw new Error('User does not exist');
         } else {
             const valid = await this.comparePassword(password, user.password);
             if (valid) {
-                const { password: _, ...userWithoutPass } = user;
+                const { password, ...userWithoutPass } = user;
                 return userWithoutPass as IUserWithoutPass;
             } else {
-                throw new Error('wrong password');
+                throw new Error('Wrong password');
             }
         }
     }
@@ -60,7 +97,7 @@ export class UserRepository extends Repository<User> {
         for (const user of users) {
             const isPasswordValid = await this.comparePassword(password, user.password);
             if (isPasswordValid) {
-                const { password: _, ...userWithoutPass } = user;
+                const { password, ...userWithoutPass } = user;
                 validUsers.push(userWithoutPass as IUserWithoutPass);
             }
         }
@@ -72,9 +109,16 @@ export class UserRepository extends Repository<User> {
         }
     }
 
-    async signUpUser(userDto: RegisterUserDto): Promise<IUser> {
+    async signUpUser(userDto: RegisterUserDto): Promise<IUserWithoutPass> {
         userDto.password = await this.hashPassword(userDto.password);
-        return await this.save(userDto);
+        const anotherRoleUser = await this.findOne({ where: { phone: userDto.phone } });
+        // Если пользователь уже зарегистрирован в системе под другой ролью, то имя берется от этой роли
+        if (anotherRoleUser) userDto.displayName = anotherRoleUser.displayName;
+        let status = EUserStatus.ACTIVE;
+        // Исполнителя нужно проверить на возраст, поэтому статус будет в ожидании
+        if (userDto.role === ERole.performer) status = EUserStatus.AWAITING;
+        const { password, ...user } = await this.save({ ...userDto, status });
+        return user;
     }
 
     async addUser(userDto: UserWithRoleDto): Promise<IUser> {

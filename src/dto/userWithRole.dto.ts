@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsByteLength, IsEnum, IsNotEmpty, IsString, Matches } from "class-validator";
 import { ERole } from '../enum/ERole.enum';
 
 export class UserWithRoleDto {
@@ -7,8 +7,7 @@ export class UserWithRoleDto {
 	@IsString()
 	@IsNotEmpty()
 	@Matches(/^[0-9]+$/, { message: 'Phone number should contain only digits' })
-	@MinLength(10, { message: 'Phone number should have at least 10 digits' })
-	@MaxLength(10, { message: 'Phone number should have at most 10 digits' })
+	@IsByteLength(10, 10)
 	phone!: string;
 
 	@Expose()
@@ -19,5 +18,6 @@ export class UserWithRoleDto {
 	@Expose()
 	@IsString()
 	@IsNotEmpty()
+	@IsEnum(ERole, { message: `User role should be one of: ${Object.values(ERole).join(', ')}.` })
 	role!: ERole;
 }

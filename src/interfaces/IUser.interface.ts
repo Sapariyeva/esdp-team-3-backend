@@ -19,3 +19,8 @@ export interface IUserWithoutPass {
 export interface IUser extends Required<IUserWithoutPass> {
     password: string;
 }
+
+export interface IUserWithTokens extends Required<IUserWithoutPass> {
+    accessToken: string;
+    refreshToken: string;
+}

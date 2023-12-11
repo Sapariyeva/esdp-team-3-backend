@@ -26,7 +26,7 @@ export class Order implements IOrder {
 	@Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
 	createdAt!: string
 
-	@Column()
+	@Column({ type: "timestamp" })
 	orderData!: string
 
 	@Column()
