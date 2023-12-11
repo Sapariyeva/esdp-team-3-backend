@@ -118,7 +118,7 @@ export class AuthController {
                     payload: { ...result, password: undefined }
                 })
             } else {
-                res.cookie('refreshToken', result.refreshToken, { maxAge: parseInt(process.env.JWT_REFRESH_TIME!), httpOnly: true })
+                res.cookie('refreshToken', result.refreshToken, { maxAge: parseInt(process.env.JWT_REFRESH_TIME!) * 1000, httpOnly: true })
                 res.send({
                     success: true,
                     message: 'You logged in',
@@ -179,7 +179,7 @@ export class AuthController {
                         return;
                     }
                     const user = await this.service.signUp(registerUserDto);
-                    res.cookie('refreshToken', user.refreshToken, { maxAge: parseInt(process.env.JWT_REFRESH_TIME!), httpOnly: true })
+                    res.cookie('refreshToken', user.refreshToken, { maxAge: parseInt(process.env.JWT_REFRESH_TIME!) * 1000, httpOnly: true })
                     res.send({
                         success: true,
                         payload: { ...user, password: undefined }
@@ -237,7 +237,7 @@ export class AuthController {
         try {
             const { refreshToken } = req.cookies;
             const user = await this.service.refresh(refreshToken);
-            res.cookie('refreshToken', user.refreshToken, { maxAge: parseInt(process.env.JWT_REFRESH_TIME!), httpOnly: true })
+            res.cookie('refreshToken', user.refreshToken, { maxAge: parseInt(process.env.JWT_REFRESH_TIME!) * 1000, httpOnly: true })
             res.send({
                 success: true,
                 message: 'Tokens refreshed',
