@@ -4,8 +4,9 @@ import { Order } from '../entities/order.entity';
 import { IOrder } from '../interfaces/IOrder.interface';
 import { EOrderStatus } from '../enum/EOrderStatus.enum';
 import { OrderDto } from '../dto/order.dto';
-import { IOrderList } from '../interfaces/IOrderList.interface';
-import { IGetOrderParams } from '../interfaces/IGetOrderParams';
+import { IOrderList } from '../interfaces/IList.interface';
+import { IGetOrderParams } from '../interfaces/IGetParams';
+import { getLinks } from '../helpers/getLinks';
 
 export class OrderRepository extends Repository<Order> {
     constructor() {
@@ -13,62 +14,33 @@ export class OrderRepository extends Repository<Order> {
     }
 
     async getOrders(params: IGetOrderParams): Promise<IOrderList> {
-        const { offset, limit, managerId, customerId, performerId } = params;
+        const { offset, limit, manager, customer, status } = params;
 
         const queryBuilder = this.createQueryBuilder("order");
 
-        if (managerId !== null) {
-            queryBuilder.andWhere("order.managerId = :managerId", { managerId });
+        if (manager) {
+            queryBuilder.andWhere("order.managerId = :manager", { manager });
         }
 
-        if (customerId !== null) {
-            queryBuilder.andWhere("order.customerId = :customerId", { customerId });
+        if (customer) {
+            queryBuilder.andWhere("order.customerId = :customer", { customer });
         }
 
         // Раскомментировать когда будет готов performerOrder
-        // if (performerId !== null) {
+        // if (performer) {
         //     queryBuilder.innerJoin("performer_order", "po", "po.orderId = order.id")
-        //         .andWhere("po.performerId = :performerId", { performerId });
+        //         .andWhere("po.performerId = :performer", { performer });
         // }
+
+        if (status) {
+            queryBuilder.andWhere("order.status = :status", { status });
+        }
 
         const totalItems = await queryBuilder.getCount();
         const orders = await queryBuilder.skip(offset).take(limit).getMany();
-        const links = this.getLinks({
-            totalItems,
-            offset,
-            limit,
-            manager: managerId,
-            customer: customerId,
-            performer: performerId
-        });
+        const links = getLinks({ ...params, totalItems }, 'order');
 
         return { orders, totalItems, totalPages: Math.ceil(totalItems / limit), links };
-    }
-
-    getLinks(params: {
-        totalItems: number,
-        offset: number,
-        limit: number,
-        manager?: number | null,
-        customer?: number | null,
-        performer?: number | null
-    }): Record<string, string | null> {
-        const { totalItems, offset, limit, manager, customer, performer } = params;
-        const totalPages = Math.ceil(totalItems / limit);
-        const linkStr = `/order?${manager ? `manager=${manager}&` : ''}${customer ? `customer=${customer}&` : ''}${performer ? `performer=${performer}&` : ''}`;
-        const links: Record<string, string | null> = {
-            next: offset + limit < totalItems ? `${linkStr}offset=${offset + limit}&limit=${limit}` : null,
-            prev: offset - limit >= 0 ? `${linkStr}offset=${offset - limit}&limit=${limit}` : null,
-            first: `${linkStr}offset=0&limit=${limit}`,
-            last: `${linkStr}offset=${(totalPages - 1) * limit}&limit=${limit}`
-        };
-
-        for (let page = 1; page <= totalPages; page++) {
-            const pageOffset = (page - 1) * limit;
-            links[`page${page}`] = `${linkStr}offset=${pageOffset}&limit=${limit}`;
-        }
-
-        return links;
     }
 
     async getOrderById(id: number): Promise<IOrder | null> {

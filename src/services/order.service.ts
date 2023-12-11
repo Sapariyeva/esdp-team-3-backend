@@ -2,8 +2,8 @@ import { OrderRepository } from '../repositories/order.repository';
 import { IOrder } from '../interfaces/IOrder.interface';
 import { EOrderStatus } from '../enum/EOrderStatus.enum';
 import { OrderDto } from '../dto/order.dto';
-import { IOrderList } from '../interfaces/IOrderList.interface';
-import { IGetOrderParams } from '../interfaces/IGetOrderParams';
+import { IOrderList } from '../interfaces/IList.interface';
+import { IGetOrderParams } from '../interfaces/IGetParams';
 
 export class OrderService {
     private repository: OrderRepository;

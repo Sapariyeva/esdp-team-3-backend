@@ -25,7 +25,7 @@ export class User implements IUser {
 	@Column({ nullable: true })
 	avatar!: string
 
-	@Column({ nullable: true })
+	@Column({ type: "timestamp", nullable: true })
 	birthday!: string
 
 	@Column()

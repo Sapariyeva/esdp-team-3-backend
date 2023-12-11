@@ -5,6 +5,9 @@ import { plainToInstance } from "class-transformer";
 import { ERole } from "../enum/ERole.enum";
 import { AuthService } from "../services/auth.service";
 import { UserWithRoleDto } from "../dto/userWithRole.dto";
+import { getOrderParams } from "../dto/getOrderParams.dto";
+import { validate } from "class-validator";
+import { EOrderStatus } from "../enum/EOrderStatus.enum";
 
 export class OrderController {
     private service: OrderService;
@@ -26,54 +29,37 @@ export class OrderController {
                     message: 'orders not found'
                 });
             }
-        } catch (e) {
-            next(e);
+        } catch (e: any) {
+            console.log(e)
+            if (Array.isArray(e)) {
+                res.status(401).send({
+                    success: false,
+                    message: e
+                })
+            } else {
+                res.status(401).send({
+                    success: false,
+                    message: e.message
+                })
+            }
         }
     }
 
     getOrders: RequestHandler = async (req, res, next): Promise<void> => {
         try {
-            let managerId = null;
-            let customerId = null;
-            let performerId = null;
+            const { customer, manager, performer, status } = req.query;
             const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
             const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
-            if (req.query.manager) {
-                const manager = await this.authService.getUserByIdAndRole(Number(req.query.manager), ERole.manager);
-                if (!manager) {
-                    res.status(400).send({
-                        success: false,
-                        message: 'there is no such manager'
-                    });
-                } else {
-                    managerId = manager.id;
-                }
-            }
-            if (req.query.customer) {
-                const customer = await this.authService.getUserByIdAndRole(Number(req.query.customer), ERole.customer);
-                if (!customer) {
-                    res.status(400).send({
-                        success: false,
-                        message: 'there is no such customer'
-                    });
-                } else {
-                    customerId = customer.id;
-                }
-            }
-            if (req.query.performer) {
-                const performer = await this.authService.getUserByIdAndRole(Number(req.query.performer), ERole.performer);
-                if (!performer) {
-                    res.status(400).send({
-                        success: false,
-                        message: 'there is no such performer'
-                    });
-                } else {
-                    performerId = performer.id;
-                }
-            }
-            const params = { offset, limit, managerId, customerId, performerId };
-            console.log('test')
-            const result = await this.service.getOrders(params);
+            const plainData = {
+                customer: customer ? parseInt(customer as string) : null,
+                manager: manager ? parseInt(manager as string) : null,
+                performer: performer ? parseInt(performer as string) : null,
+                status: status ? status as EOrderStatus : null
+            };
+            const paramsDto = plainToInstance(getOrderParams, plainData);
+            const errors = await validate(paramsDto);
+            if (errors.length) throw errors;
+            const result = await this.service.getOrders({ ...paramsDto, offset, limit });
 
             if (result.orders.length !== 0) {
                 res.send(result);
@@ -83,8 +69,19 @@ export class OrderController {
                     message: 'Orders not found'
                 });
             }
-        } catch (e) {
-            next(e);
+        } catch (e: any) {
+            console.log(e)
+            if (Array.isArray(e)) {
+                res.status(401).send({
+                    success: false,
+                    message: e
+                })
+            } else {
+                res.status(401).send({
+                    success: false,
+                    message: e.message
+                })
+            }
         }
     }
 
@@ -119,6 +116,8 @@ export class OrderController {
                 orderDto.customerId = req.app.locals.user.id;
                 orderDto.managerId = 1;
             }
+            const errors = await validate(orderDto);
+            if (errors.length) throw errors;
             const createdOrder = await this.service.createOrder(orderDto);
             if (createdOrder) {
                 res.send(createdOrder);
