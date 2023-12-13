@@ -8,7 +8,14 @@ import { PerformerOrderRoute } from './routes/performerOrder.route';
 
 const app = new App({
   port: 8000,
-  middlewares: [logger(), cookieParser(), cors()],
+  middlewares: [
+    logger(),
+    cookieParser(),
+    cors({
+      credentials: true,
+      origin: process.env.CLIENT_URL
+    })
+  ],
   routes: [
     new AuthRoute(),
     new OrderRoute(),
