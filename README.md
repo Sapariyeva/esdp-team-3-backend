@@ -183,7 +183,7 @@
 
  Доступные на данный момент query-параметры:
  - phone - фильтрует список по телефону, например "/user?phone=7103895429",
- - email - фильтрует список по Email, например "/user?email=user@example.com",
+ - email - фильтрует список по Email, например "/user?email=user@example<area>.com",
  - role - фильтрует список по роли пользователя, например "/user?role=manager" или "/user?role=customer"
  - status - фильтрует список по статусу пользователя, например "/user?status=ACTIVE" или "/user?status=BLOCKED"
  - offset - указывает количество пропущенных записей, например "/user?offset=10" пропустит первые 10 записей и вернет список, начиная с 11 позиции
@@ -193,7 +193,7 @@
    
    По умолчанию, если эти параметры пагинации не были отправлены, то offset принимает значение 0, а limit значение 20.
    
-   Параметры можно комбинировать между собой и даже перечислить все сразу в одном запросе "/user?phone=7103895429&email=user@example.com&role=manager&status=ACTIVE&offset=18&limit=6"
+   Параметры можно комбинировать между собой и даже перечислить все сразу в одном запросе "/user?phone=7103895429&email=user@example<area>.com&role=manager&status=ACTIVE&offset=18&limit=6"
 
    Пример формата в котором придет информация, для которого использовался запрос "user?role=manager&status=ACTIVE&offset=2&limit=2":
   ```
