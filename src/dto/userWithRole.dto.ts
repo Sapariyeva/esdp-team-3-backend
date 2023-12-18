@@ -1,13 +1,8 @@
 import { Expose } from 'class-transformer';
-import { IsByteLength, IsEnum, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+import { IsByteLength, IsEnum, IsNotEmpty, IsString, Matches } from "class-validator";
 import { ERole } from '../enum/ERole.enum';
 
-export class RegisterUserDto {
-	@Expose()
-	@IsString()
-	@IsNotEmpty()
-	displayName!: string;
-
+export class UserWithRoleDto {
 	@Expose()
 	@IsString()
 	@IsNotEmpty()
@@ -18,7 +13,6 @@ export class RegisterUserDto {
 	@Expose()
 	@IsString()
 	@IsNotEmpty()
-	@IsByteLength(6, 32)
 	password!: string;
 
 	@Expose()
@@ -26,16 +20,4 @@ export class RegisterUserDto {
 	@IsNotEmpty()
 	@IsEnum(ERole, { message: `User role should be one of: ${Object.values(ERole).join(', ')}.` })
 	role!: ERole;
-
-	@Expose()
-	@IsString()
-	@IsOptional()
-	birthday!: string;
-
-	@Expose()
-	@IsString()
-	@IsOptional()
-	@Matches(/^[0-9]+$/, { message: 'BIN/IIN field should contain only digits' })
-	@IsByteLength(12, 12)
-	identifyingNumber!: string;
 }

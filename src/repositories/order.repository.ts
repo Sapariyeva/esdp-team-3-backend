@@ -2,16 +2,45 @@ import { Repository } from 'typeorm';
 import { appDataSource } from '../dataSource';
 import { Order } from '../entities/order.entity';
 import { IOrder } from '../interfaces/IOrder.interface';
-import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
+import { EOrderStatus } from '../enum/EOrderStatus.enum';
 import { OrderDto } from '../dto/order.dto';
+import { IOrderList } from '../interfaces/IList.interface';
+import { IGetOrderParams } from '../interfaces/IGetParams';
+import { getLinks } from '../helpers/getLinks';
 
 export class OrderRepository extends Repository<Order> {
     constructor() {
         super(Order, appDataSource.createEntityManager());
     }
 
-    async getOrders(): Promise<IOrder[]> {
-        return await this.find();
+    async getOrders(params: IGetOrderParams): Promise<IOrderList> {
+        const { offset, limit, manager, customer, status } = params;
+
+        const queryBuilder = this.createQueryBuilder("order");
+
+        if (manager) {
+            queryBuilder.andWhere("order.managerId = :manager", { manager });
+        }
+
+        if (customer) {
+            queryBuilder.andWhere("order.customerId = :customer", { customer });
+        }
+
+        // Раскомментировать когда будет готов performerOrder
+        // if (performer) {
+        //     queryBuilder.innerJoin("performer_order", "po", "po.orderId = order.id")
+        //         .andWhere("po.performerId = :performer", { performer });
+        // }
+
+        if (status) {
+            queryBuilder.andWhere("order.status = :status", { status });
+        }
+
+        const totalItems = await queryBuilder.getCount();
+        const orders = await queryBuilder.skip(offset).take(limit).getMany();
+        const links = getLinks({ ...params, totalItems }, 'order');
+
+        return { orders, totalItems, totalPages: Math.ceil(totalItems / limit), links };
     }
 
     async getOrderById(id: number): Promise<IOrder | null> {
@@ -20,38 +49,28 @@ export class OrderRepository extends Repository<Order> {
         })
     }
 
-    async getOrdersByManager(manager_id: number): Promise<IOrder[]> {
-        return await this.find({
-            where: { manager_id }
-        });
-    }
-
-    async getOrdersByCustomer(customer_id: number): Promise<IOrder[]> {
-        return await this.find({
-            where: { customer_id }
-        });
-    }
-
-    async getOrdersByPerformer(performer_id: number): Promise<IOrder[]> {
-        return await this.createQueryBuilder("order")
-            .innerJoin("performer_order", "po", "po.order_id = order.id")
-            .where("po.performer_id = :performer_id", { performer_id })
-            .getMany();
-    }
-
     async createOrder(data: OrderDto): Promise<IOrder> {
         const order = new Order();
         order.address = data.address;
-        order.customer_id = data.customer_id;
-        order.service_id = data.service_id
-        order.order_data = data.order_data;
-        order.performers_quantity = data.performers_quantity;
+        order.customerId = data.customerId;
+        order.serviceId = data.serviceId
+        order.orderData = data.orderData;
+        order.performersQuantity = data.performersQuantity;
         order.lat = data.lat;
         order.lng = data.lng;
-        order.manager_id = data.manager_id;
+        order.managerId = data.managerId;
         order.status = EOrderStatus.IN_PROGRESS;
         const savedOrder = await this.save(order);
         return savedOrder;
+    }
+
+    async cancelOrder(id: number): Promise<IOrder | null> {
+        const updatedOrder = await this.update({ id }, { status: EOrderStatus.CANCELED });
+        if (updatedOrder.affected && updatedOrder.affected > 0) {
+            return updatedOrder.raw[0] as IOrder;
+        } else {
+            return null;
+        }
     }
 
     async changeOrderStatus(id: number, status: EOrderStatus): Promise<IOrder | null> {

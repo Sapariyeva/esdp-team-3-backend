@@ -1,11 +1,13 @@
 import { RequestHandler } from "express";
 import { OrderService } from "../services/order.service";
-import { UserRepository } from "../repositories/user.repository";
 import { OrderDto } from "../dto/order.dto";
 import { plainToInstance } from "class-transformer";
-import { ERole } from "../interfaces/ERole.enum";
+import { ERole } from "../enum/ERole.enum";
 import { AuthService } from "../services/auth.service";
-import { RegisterUserByManagerDto } from "../dto/registerUserByManager.dto";
+import { UserWithRoleDto } from "../dto/userWithRole.dto";
+import { getOrderParams } from "../dto/getOrderParams.dto";
+import { validate } from "class-validator";
+import { EOrderStatus } from "../enum/EOrderStatus.enum";
 
 export class OrderController {
     private service: OrderService;
@@ -16,74 +18,70 @@ export class OrderController {
         this.authService = new AuthService();
     }
 
+    getOrder: RequestHandler = async (req, res, next): Promise<void> => {
+        try {
+            const order = await this.service.getOrderById(parseInt(req.params.id));
+            if (order) {
+                res.send(order);
+            } else {
+                res.status(400).send({
+                    success: false,
+                    message: 'orders not found'
+                });
+            }
+        } catch (e: any) {
+            console.log(e)
+            if (Array.isArray(e)) {
+                res.status(401).send({
+                    success: false,
+                    message: e
+                })
+            } else {
+                res.status(401).send({
+                    success: false,
+                    message: e.message
+                })
+            }
+        }
+    }
+
     getOrders: RequestHandler = async (req, res, next): Promise<void> => {
         try {
-            let token = req.headers['authorization'];
-            if (req.headers && token) {
-                if (token.startsWith('Bearer ')) token = token.slice(7);
-                const userRepository = new UserRepository();
-                const user = await userRepository.getUserByToken(token);
-                if (user) {
-                    const orders = await this.service.getOrders();
-                    if (orders.length !== 0) {
-                        res.send(orders);
-                    } else {
-                        res.status(400).send({
-                            success: false,
-                            message: 'orders not found'
-                        });
-                    }
-                } else {
-                    res.status(401).send({
-                        success: false,
-                        message: 'wrong token'
-                    })
-                }
-            } else {
-                throw new Error('There is no authorization token')
-            }
-        } catch (e) {
-            next(e);
-        }
-    }
+            const { customer, manager, performer, status } = req.query;
+            const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
+            const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+            const plainData = {
+                customer: customer ? parseInt(customer as string) : null,
+                manager: manager ? parseInt(manager as string) : null,
+                performer: performer ? parseInt(performer as string) : null,
+                status: status ? status as EOrderStatus : null
+            };
+            const paramsDto = plainToInstance(getOrderParams, plainData);
+            const errors = await validate(paramsDto);
+            if (errors.length) throw errors;
+            const result = await this.service.getOrders({ ...paramsDto, offset, limit });
 
-    getOrdersByCustomer: RequestHandler = async (req, res, next): Promise<void> => {
-        try {
-            if (!req.query.customer) {
-                next();
+            if (result.orders.length !== 0) {
+                res.send(result);
             } else {
-                const orders = await this.service.getOrdersByCustomer(Number(req.query.customer));
-                if (orders) {
-                    res.send(orders);
-                } else {
-                    res.status(400).send({
-                        success: false,
-                        message: 'orders not found'
-                    });
-                }
+                res.status(400).send({
+                    success: false,
+                    message: 'Orders not found'
+                });
             }
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    getOrdersByManager: RequestHandler = async (req, res, next): Promise<void> => {
-        try {
-            if (!req.query.manager) {
-                next();
+        } catch (e: any) {
+            console.log(e)
+            if (Array.isArray(e)) {
+                res.status(401).send({
+                    success: false,
+                    message: e
+                })
             } else {
-                const orders = await this.service.getOrdersByManager(Number(req.query.manager));
-                if (orders) {
-                    res.send(orders);
-                } else {
-                    res.status(400).send({
-                        success: false,
-                        message: 'orders not found'
-                    });
-                }
+                res.status(401).send({
+                    success: false,
+                    message: e.message
+                })
             }
-        } catch (e) {
-            next(e);
         }
     }
 
@@ -92,25 +90,34 @@ export class OrderController {
             const orderDto = plainToInstance(OrderDto, req.body);
             if (req.app.locals.user.role === ERole.manager || req.app.locals.user.role === ERole.admin) {
                 // Если заказ создает менеджер
-                orderDto.manager_id = req.app.locals.user.id;
-                if (!orderDto.customer_id) {
-                    if (!orderDto.display_name || !orderDto.phone) {
+                orderDto.managerId = req.app.locals.user.id;
+                if (!orderDto.customerId) {
+                    if (!orderDto.displayName || !orderDto.phone) {
                         res.status(400).send({
                             success: false,
                             message: 'No client was selected'
                         });
                     }
-                    // Создаем клиента
-                    const registerUserByManager = plainToInstance(RegisterUserByManagerDto, req.body);
-                    registerUserByManager.role = ERole.customer;
-                    const createdCustomer = await this.authService.addUser(registerUserByManager);
-                    orderDto.customer_id = createdCustomer.id;
+                    // Проверяем наличие пользователя в БД по номеру телефона и роли клиента
+                    const user = await this.authService.getUserByPhoneAndRole(orderDto.phone, ERole.customer);
+                    // Если пользователь не найден
+                    if (!user) {
+                        // Создаем клиента
+                        const registerUserByManager = plainToInstance(UserWithRoleDto, req.body);
+                        registerUserByManager.role = ERole.customer;
+                        const createdCustomer = await this.authService.addUser(registerUserByManager);
+                        orderDto.customerId = createdCustomer.id;
+                    } else {
+                        orderDto.customerId = user.id;
+                    }
                 }
             } else {
                 // Если заказ создает клиент
-                orderDto.customer_id = req.app.locals.user.id;
-                orderDto.manager_id = 1;
+                orderDto.customerId = req.app.locals.user.id;
+                orderDto.managerId = 1;
             }
+            const errors = await validate(orderDto);
+            if (errors.length) throw errors;
             const createdOrder = await this.service.createOrder(orderDto);
             if (createdOrder) {
                 res.send(createdOrder);
@@ -135,15 +142,15 @@ export class OrderController {
         }
     }
 
-    changeOrderStatus: RequestHandler = async (req, res): Promise<void> => {
+    cancelOrder: RequestHandler = async (req, res): Promise<void> => {
         try {
-            const updatedOrder = await this.service.changeOrderStatus(req.body.order_id, req.body.order_status);
-            if (updatedOrder) {
-                res.send(updatedOrder);
+            const canceledOrder = await this.service.cancelOrder(parseInt(req.params.id));
+            if (canceledOrder) {
+                res.send(canceledOrder);
             } else {
                 res.status(400).send({
                     success: false,
-                    message: 'order wasn\'t updated'
+                    message: 'order wasn\'t canceled'
                 });
             }
         } catch (e: any) {
@@ -160,5 +167,6 @@ export class OrderController {
             }
         }
     }
+
 
 }

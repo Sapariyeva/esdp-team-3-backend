@@ -1,55 +1,53 @@
 import { Column, PrimaryGeneratedColumn, Entity, Unique } from 'typeorm';
 import { IUser } from '../interfaces/IUser.interface';
-import { nanoid } from 'nanoid';
+import { ERole } from '../enum/ERole.enum';
+import { EUserStatus } from '../enum/EUserStatus.enum';
 import bcrypt from 'bcrypt'
-import { ERole } from '../interfaces/ERole.enum';
 
 @Entity()
-@Unique(['username'])
+@Unique(['phone', 'role'])
 export class User implements IUser {
-    @PrimaryGeneratedColumn()
-    id!: number
+	@PrimaryGeneratedColumn()
+	id!: number
 
-    @Column()
-    display_name!: string
+	@Column()
+	displayName!: string
 
-    @Column()
-    phone!: string
+	@Column()
+	phone!: string
 
-    @Column({ nullable: true })
-    username!: string
+	@Column({ nullable: true })
+	email!: string
 
-    @Column({ nullable: true })
-    email!: string
+	@Column({ nullable: true })
+	password!: string
 
-    @Column({ nullable: true })
-    password!: string
+	@Column({ nullable: true })
+	avatar!: string
 
-    @Column({ nullable: true })
-    avatar!: string
+	@Column({ type: "timestamp", nullable: true })
+	birthday!: string
 
-    @Column()
-    role!: ERole
+	@Column()
+	role!: ERole
 
-    @Column({ nullable: true })
-    token!: string
+	@Column({ nullable: true })
+	avgRating!: number
 
-    @Column({ nullable: true })
-    avg_rating!: number
+	@Column({ nullable: true })
+	ratingCount!: number
 
-    @Column({ nullable: true })
-    rating_count!: number
+	@Column({ nullable: true })
+	lastPostition!: string
 
-    @Column({ nullable: true })
-    last_postition!: string
+	@Column({ nullable: true })
+	identifyingNumber!: string
 
-    hashPassword(): void {
-        const salt = bcrypt.genSaltSync(10);
-        this.password = bcrypt.hashSync(this.password, salt);
-    }
+	@Column({ default: EUserStatus.ACTIVE })
+	status!: EUserStatus
 
-    generateToken(): void {
-        this.token = nanoid();
-    }
-
+	hashPassword(): void {
+		const salt = bcrypt.genSaltSync(10);
+		this.password = bcrypt.hashSync(this.password, salt);
+	}
 }

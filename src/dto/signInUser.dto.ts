@@ -1,14 +1,16 @@
 import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsByteLength, IsNotEmpty, IsString, Matches } from "class-validator";
 
 export class SignInUserDto {
-  @Expose()
-  @IsString()
-  @IsNotEmpty()
-  username!: string;
+	@Expose()
+	@IsString()
+	@IsNotEmpty()
+	@Matches(/^[0-9]+$/, { message: 'Phone number should contain only digits' })
+	@IsByteLength(10, 10)
+	phone!: string;
 
-  @Expose()
-  @IsString()
-  @IsNotEmpty()
-  password!: string;
+	@Expose()
+	@IsString()
+	@IsNotEmpty()
+	password!: string;
 }

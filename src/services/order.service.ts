@@ -1,7 +1,9 @@
 import { OrderRepository } from '../repositories/order.repository';
 import { IOrder } from '../interfaces/IOrder.interface';
-import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
+import { EOrderStatus } from '../enum/EOrderStatus.enum';
 import { OrderDto } from '../dto/order.dto';
+import { IOrderList } from '../interfaces/IList.interface';
+import { IGetOrderParams } from '../interfaces/IGetParams';
 
 export class OrderService {
     private repository: OrderRepository;
@@ -10,28 +12,20 @@ export class OrderService {
         this.repository = new OrderRepository();
     }
 
-    getOrders = async (): Promise<IOrder[]> => {
-        return await this.repository.getOrders();
+    getOrders = async (params: IGetOrderParams): Promise<IOrderList> => {
+        return await this.repository.getOrders(params);
     }
 
-    getOrderById = async (order_id: number): Promise<IOrder | null> => {
-        return await this.repository.getOrderById(order_id);
-    }
-
-    getOrdersByManager = async (manager_id: number): Promise<IOrder[]> => {
-        return await this.repository.getOrdersByManager(manager_id);
-    }
-
-    getOrdersByCustomer = async (customer_id: number): Promise<IOrder[]> => {
-        return await this.repository.getOrdersByCustomer(customer_id);
-    }
-
-    getOrdersByPerformer = async (performer_id: number): Promise<IOrder[]> => {
-        return await this.repository.getOrdersByPerformer(performer_id);
+    getOrderById = async (orderId: number): Promise<IOrder | null> => {
+        return await this.repository.getOrderById(orderId);
     }
 
     createOrder = async (orderDto: OrderDto): Promise<IOrder | null> => {
         return await this.repository.createOrder(orderDto);
+    }
+
+    cancelOrder = async (id: number): Promise<IOrder | null> => {
+        return await this.repository.cancelOrder(id);
     }
 
     changeOrderStatus = async (id: number, status: EOrderStatus): Promise<IOrder | null> => {

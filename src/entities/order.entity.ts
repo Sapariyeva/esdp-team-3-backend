@@ -1,64 +1,70 @@
 import { Column, PrimaryGeneratedColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { IOrder } from '../interfaces/IOrder.interface';
-import { EOrderStatus } from '../interfaces/EOrderStatus.enum';
 import { Service } from './service.entity';
 import { User } from './user.entity';
+import { EOrderStatus } from '../enum/EOrderStatus.enum';
 
 @Entity()
 export class Order implements IOrder {
-    @PrimaryGeneratedColumn()
-    id!: number
+	@PrimaryGeneratedColumn()
+	id!: number
 
-    @Column()
-    customer_id!: number
+	@Column()
+	customerId!: number
 
-    @ManyToOne(() => User)
-    @JoinColumn({ name: 'customer_id' })
-    customer!: User
+	@ManyToOne(() => User)
+	@JoinColumn({ name: 'customerId' })
+	customer!: User
 
-    @Column()
-    service_id!: number
+	@Column()
+	serviceId!: number
 
-    @ManyToOne(() => Service)
-    @JoinColumn({ name: 'service_id' })
-    service!: Service
+	@ManyToOne(() => Service)
+	@JoinColumn({ name: 'serviceId' })
+	service!: Service
 
-    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-    created_at!: string
+	@Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+	createdAt!: string
 
-    @Column()
-    order_data!: string
+	@Column({ type: "timestamp" })
+	orderData!: string
 
-    @Column()
-    address!: string
+	@Column()
+	address!: string
 
-    @Column()
-    performers_quantity!: number
+	@Column({ nullable: true })
+	description!: string
 
-    @Column({ nullable: true })
-    time_worked!: number
+	@Column()
+	performersQuantity!: number
 
-    @Column({ nullable: true })
-    income!: number
+	@Column({ nullable: true })
+	timeWorked!: number
 
-    @Column({ nullable: true })
-    performer_payment!: number
+	@Column({ nullable: true })
+	income!: number
 
-    @Column({ nullable: true })
-    tax!: number
+	@Column({ nullable: true })
+	performerPayment!: number
 
-    @Column({ nullable: true })
-    profit!: number
+	@Column({ nullable: true })
+	tax!: number
 
-    @Column()
-    lat!: number
+	@Column({ nullable: true })
+	profit!: number
 
-    @Column()
-    lng!: number
+	@Column()
+	lat!: number
 
-    @Column({ nullable: true })
-    manager_id!: number
+	@Column()
+	lng!: number
 
-    @Column()
-    status!: EOrderStatus
+	@Column({ nullable: true })
+	managerId!: number
+
+	@Column({ nullable: true })
+	managerCommentary!: string
+
+	@Column()
+	status!: EOrderStatus
 }

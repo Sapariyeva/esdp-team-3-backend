@@ -1,16 +1,26 @@
-import { ERole } from "./ERole.enum";
+import { ERole } from "../enum/ERole.enum";
+import { EUserStatus } from "../enum/EUserStatus.enum";
 
-export interface IUser {
+export interface IUserWithoutPass {
     id: number;
-    display_name: string;
-    username: string;
-    email: string;
     phone: string;
-    password: string;
+    displayName: string;
+    email: string;
+    birthday: string;
     avatar: string;
-    token?: string | null;
     role: ERole;
-    avg_rating: number;
-    rating_count: number;
-    last_postition: string;
+    avgRating: number;
+    ratingCount: number;
+    lastPostition: string;
+    identifyingNumber: string;
+    status: EUserStatus;
+}
+
+export interface IUser extends Required<IUserWithoutPass> {
+    password: string;
+}
+
+export interface IUserWithTokens extends Required<IUserWithoutPass> {
+    accessToken: string;
+    refreshToken: string;
 }

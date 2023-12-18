@@ -1,68 +1,128 @@
-import { IUser } from '../interfaces/IUser.interface';
+import { IUser, IUserWithoutPass } from '../interfaces/IUser.interface';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { appDataSource } from '../dataSource';
-import { nanoid } from 'nanoid';
 import { SignInUserDto } from '../dto/signInUser.dto';
 import { RegisterUserDto } from '../dto/registerUser.dto';
+import { ERole } from '../enum/ERole.enum';
+import { UserWithRoleDto } from '../dto/userWithRole.dto';
+import { IGetUserParams } from '../interfaces/IGetParams';
+import { IUserList } from '../interfaces/IList.interface';
+import { getLinks } from '../helpers/getLinks';
+import { EUserStatus } from '../enum/EUserStatus.enum';
 import bcrypt from 'bcrypt';
-import { RegisterUserByManagerDto } from '../dto/registerUserByManager.dto';
 
 export class UserRepository extends Repository<User> {
     constructor() {
         super(User, appDataSource.createEntityManager());
     }
 
-    async getUserByToken(token: string): Promise<User | null> {
+    async getUserById(id: number): Promise<IUserWithoutPass | null> {
+        const user = await this.findOne({
+            where: { id }
+        })
+        if (user) {
+            const { password, ...userWithoutPass } = user;
+            return userWithoutPass;
+        }
+        return user
+    }
+
+    async getUserByIdAndRole(id: number, role: ERole): Promise<IUser | null> {
         return await this.findOne({
-            where: { token }
+            where: { id, role }
         })
     }
 
-    async getUser(username: string): Promise<IUser | null> {
+    async getUserByPhoneAndRole(phone: string, role: ERole): Promise<IUser | null> {
         return await this.findOne({
-            where: { username }
-        });
+            where: { phone, role }
+        })
     }
 
-    async signInUser(userDTO: SignInUserDto): Promise<IUser> {
-        const { username, password } = userDTO;
-        const user = await this.getUser(username);
+    async getUsers(params: IGetUserParams): Promise<IUserList> {
+        const { offset, limit, phone, email, role, status } = params;
+
+        const queryBuilder = this.createQueryBuilder("user");
+
+        if (phone) {
+            queryBuilder.andWhere("user.phone = :phone", { phone });
+        }
+
+        if (email) {
+            queryBuilder.andWhere("user.email = :email", { email });
+        }
+
+        if (role) {
+            queryBuilder.andWhere("user.role = :role", { role });
+        }
+
+        if (status) {
+            queryBuilder.andWhere("user.status = :status", { status });
+        }
+
+        const totalItems = await queryBuilder.getCount();
+        const users = await queryBuilder.skip(offset).take(limit).getMany();
+        const links = getLinks({ totalItems, ...params }, 'user');
+
+        return { users, totalItems, totalPages: Math.ceil(totalItems / limit), links };
+    }
+
+    async signInWithRole(userDto: UserWithRoleDto): Promise<IUserWithoutPass> {
+        const { phone, password, role } = userDto;
+        const user = await this.getUserByPhoneAndRole(phone, role);
         if (!user) {
-            throw new Error('user not exist');
+            throw new Error('User does not exist');
         } else {
             const valid = await this.comparePassword(password, user.password);
             if (valid) {
-                const token = nanoid();
-                await this.update(
-                    { username },
-                    { token })
-                return {
-                    ...user,
-                    token,
-                };
+                const { password, ...userWithoutPass } = user;
+                return userWithoutPass as IUserWithoutPass;
             } else {
-                throw new Error('wrong password');
+                throw new Error('Wrong password');
             }
         }
     }
 
-    async signUpUser(userDto: RegisterUserDto): Promise<IUser> {
-        userDto.password = await this.hashPassword(userDto.password);
-        return await this.save({ ...userDto, token: nanoid() });
-    }
+    async signInUser(userDto: SignInUserDto): Promise<IUserWithoutPass[]> {
+        const { phone, password } = userDto;
+        const users = await this.find({ where: { phone } });
 
-    async addUser(userDto: RegisterUserByManagerDto): Promise<IUser> {
-        return await this.save(userDto);
-    }
-
-    async signOut(token: string): Promise<void> {
-        const user = await this.findOne({ where: { token } });
-        if (user) {
-            await this.update({ token }, { token: "" });
-        } else {
-            throw new Error('User already signed out');
+        if (users.length === 0) {
+            throw new Error('User does not exist');
         }
+
+        const validUsers: IUserWithoutPass[] = [];
+
+        for (const user of users) {
+            const isPasswordValid = await this.comparePassword(password, user.password);
+            if (isPasswordValid) {
+                const { password, ...userWithoutPass } = user;
+                validUsers.push(userWithoutPass as IUserWithoutPass);
+            }
+        }
+
+        if (validUsers.length === 0) {
+            throw new Error('Wrong password');
+        } else {
+            return validUsers;
+        }
+    }
+
+    async signUpUser(userDto: RegisterUserDto): Promise<IUserWithoutPass> {
+        userDto.password = await this.hashPassword(userDto.password);
+        const anotherRoleUser = await this.findOne({ where: { phone: userDto.phone } });
+        // Если пользователь уже зарегистрирован в системе под другой ролью, то имя берется от этой роли
+        if (anotherRoleUser) userDto.displayName = anotherRoleUser.displayName;
+        let status = EUserStatus.ACTIVE;
+        // Исполнителя нужно проверить на возраст, поэтому статус будет в ожидании
+        if (userDto.role === ERole.performer) status = EUserStatus.AWAITING;
+        const { password, ...user } = await this.save({ ...userDto, status });
+        return user;
+    }
+
+    async addUser(userDto: UserWithRoleDto): Promise<IUser> {
+        return await this.save(userDto);
     }
 
     private hashPassword = async (password: string): Promise<string> => {
