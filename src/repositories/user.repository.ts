@@ -11,6 +11,7 @@ import { IUserList } from '../interfaces/IList.interface';
 import { getLinks } from '../helpers/getLinks';
 import { EUserStatus } from '../enum/EUserStatus.enum';
 import bcrypt from 'bcrypt';
+import { RegisterUserByManager } from '../dto/registerUserByManager.dto';
 
 export class UserRepository extends Repository<User> {
     constructor() {
@@ -121,7 +122,7 @@ export class UserRepository extends Repository<User> {
         return user;
     }
 
-    async addUser(userDto: UserWithRoleDto): Promise<IUser> {
+    async addUser(userDto: RegisterUserByManager): Promise<IUser> {
         return await this.save(userDto);
     }
 

@@ -8,6 +8,7 @@ import { validate } from 'class-validator';
 import { TokenService } from './token.service';
 import { IGetUserParams } from '../interfaces/IGetParams';
 import { IUserList } from '../interfaces/IList.interface';
+import { RegisterUserByManager } from '../dto/registerUserByManager.dto';
 
 export class AuthService {
     private repository: UserRepository;
@@ -61,7 +62,7 @@ export class AuthService {
         return { ...user, ...tokens };
     }
 
-    addUser = async (userDto: UserWithRoleDto): Promise<IUser> => {
+    addUser = async (userDto: RegisterUserByManager): Promise<IUser> => {
         const errors = await validate(userDto);
         if (errors.length) throw errors;
         return await this.repository.addUser(userDto);

@@ -41,6 +41,11 @@ export class OrderDto implements IOrder {
 	@Expose()
 	lng!: number
 
+	@IsNotEmpty()
+	@IsString()
+	@Expose()
+	description!: string
+
 	@IsNumber()
 	@Expose()
 	managerId!: number

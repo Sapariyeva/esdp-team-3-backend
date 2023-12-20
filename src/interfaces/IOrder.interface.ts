@@ -6,7 +6,7 @@ export interface IOrder {
     createdAt?: string;
     orderData: string;
     address: string;
-    description?: string;
+    description: string;
     performersQuantity: number;
     timeWorked?: number;
     income?: number;

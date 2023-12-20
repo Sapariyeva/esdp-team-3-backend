@@ -53,10 +53,10 @@ export class Order implements IOrder {
 	@Column({ nullable: true })
 	profit!: number
 
-	@Column()
+	@Column({ nullable: true })
 	lat!: number
 
-	@Column()
+	@Column({ nullable: true })
 	lng!: number
 
 	@Column({ nullable: true })

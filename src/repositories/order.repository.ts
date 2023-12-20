@@ -60,6 +60,7 @@ export class OrderRepository extends Repository<Order> {
         order.lng = data.lng;
         order.managerId = data.managerId;
         order.status = EOrderStatus.IN_PROGRESS;
+        order.description = data.description;
         const savedOrder = await this.save(order);
         return savedOrder;
     }
