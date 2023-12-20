@@ -4,10 +4,10 @@ import { OrderDto } from "../dto/order.dto";
 import { plainToInstance } from "class-transformer";
 import { ERole } from "../enum/ERole.enum";
 import { AuthService } from "../services/auth.service";
-import { UserWithRoleDto } from "../dto/userWithRole.dto";
 import { getOrderParams } from "../dto/getOrderParams.dto";
 import { validate } from "class-validator";
 import { EOrderStatus } from "../enum/EOrderStatus.enum";
+import { RegisterUserByManager } from "../dto/registerUserByManager.dto";
 
 export class OrderController {
     private service: OrderService;
@@ -103,7 +103,7 @@ export class OrderController {
                     // Если пользователь не найден
                     if (!user) {
                         // Создаем клиента
-                        const registerUserByManager = plainToInstance(UserWithRoleDto, req.body);
+                        const registerUserByManager = plainToInstance(RegisterUserByManager, req.body);
                         registerUserByManager.role = ERole.customer;
                         const createdCustomer = await this.authService.addUser(registerUserByManager);
                         orderDto.customerId = createdCustomer.id;
