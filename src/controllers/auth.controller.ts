@@ -9,6 +9,11 @@ import { validate } from "class-validator";
 import { getUserParams } from "../dto/getUserParams.dto";
 import dotenv from "dotenv";
 import * as process from "process";
+import { UserRepository } from "../repositories/user.repository";
+import * as fs from 'fs';
+import * as fastcsv from 'fast-csv';
+import path from 'path';
+import { getCurrentDate } from "../helpers/getCurrentDate";
 
 dotenv.config();
 
@@ -78,6 +83,68 @@ export class AuthController {
         }
     }
 
+    getUserCSV: RequestHandler = async (req, res): Promise<void> => {
+        try {
+            const userRepository = new UserRepository();
+            const users = await userRepository.getUserCSV();
+
+            const formattedDateTime = getCurrentDate();
+
+            const csvFileName = `users_${formattedDateTime}.csv`;
+            const csvFilePath = path.join(__dirname, '../..', 'csv', csvFileName);
+
+            const ws = fs.createWriteStream(csvFilePath);
+            const csvStream = fastcsv.format({ headers: true });
+            csvStream.pipe(ws);
+
+            users.forEach(user => {
+                csvStream.write({
+                    'ID': user.id,
+                    'Телефон': user.phone,
+                    'Имя': user.displayName,
+                    'Email': user.email,
+                    'День рождения': user.birthday,
+                    'Роль': user.role,
+                    'Средний рейтинг': user.avgRating,
+                    'Кол-во отзывов': user.ratingCount,
+                    'Последнее местоположение': user.lastPosition,
+                    'БИН/ИИН': user.identifyingNumber,
+                    'Статус': user.status
+                });
+            });
+
+            csvStream.end();
+            ws.on('finish', () => {
+                console.log('CSV файл успешно создан.');
+                res.download(csvFilePath, csvFileName, (err) => {
+                    if (err) {
+                        console.error(err);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    } else {
+                        fs.unlinkSync(csvFilePath);
+                    }
+                });
+            });
+
+            ws.on('error', (error) => {
+                console.error(error);
+            });
+
+        } catch (e: any) {
+            console.log(e);
+            if (e.message) {
+                res.status(400).send({
+                    success: false,
+                    message: e.message
+                });
+            } else if (Array.isArray(e)) {
+                res.status(400).send(e);
+            } else {
+                res.status(500).send(e);
+            }
+        }
+    }
+
     signInWithRole: RequestHandler = async (req, res) => {
         try {
             const userDto = plainToInstance(UserWithRoleDto, req.body);
@@ -85,7 +152,6 @@ export class AuthController {
             if (errors.length) throw errors;
             const user = await this.service.signInWithRole(userDto);
             res.cookie('refreshToken', user.refreshToken, { maxAge: parseInt(process.env.JWT_REFRESH_TIME!) * 1000, httpOnly: true })
-            console.log(res.cookie);
             res.send({
                 success: true,
                 message: 'You logged in',

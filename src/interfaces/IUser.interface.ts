@@ -11,7 +11,7 @@ export interface IUserWithoutPass {
     role: ERole;
     avgRating: number;
     ratingCount: number;
-    lastPostition: string;
+    lastPosition: string;
     identifyingNumber: string;
     status: EUserStatus;
 }
