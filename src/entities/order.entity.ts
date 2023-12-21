@@ -1,8 +1,9 @@
-import { Column, PrimaryGeneratedColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { IOrder } from '../interfaces/IOrder.interface';
 import { Service } from './service.entity';
 import { User } from './user.entity';
 import { EOrderStatus } from '../enum/EOrderStatus.enum';
+import { PerformerOrder } from './performerOrder.entity';
 
 @Entity()
 export class Order implements IOrder {
@@ -38,6 +39,9 @@ export class Order implements IOrder {
 	@Column()
 	performersQuantity!: number
 
+	@OneToMany(() => PerformerOrder, performerOrder => performerOrder.order)
+	performerOrders!: PerformerOrder[];
+
 	@Column({ nullable: true })
 	timeWorked!: number
 
@@ -61,6 +65,10 @@ export class Order implements IOrder {
 
 	@Column({ nullable: true })
 	managerId!: number
+
+	@ManyToOne(() => User)
+	@JoinColumn({ name: 'managerId' })
+	manager!: User
 
 	@Column({ nullable: true })
 	managerCommentary!: string

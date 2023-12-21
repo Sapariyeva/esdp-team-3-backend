@@ -5,9 +5,12 @@ import { EUserStatus } from "../enum/EUserStatus.enum";
 interface IGetParams {
     offset: number;
     limit: number;
+    sortBy?: string,
+    sortOrder?: 'ASC' | 'DESC';
 }
 
 export interface IGetOrderParams extends IGetParams {
+    service?: number | null;
     manager?: number | null;
     customer?: number | null;
     performer?: number | null;

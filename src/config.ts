@@ -8,6 +8,7 @@ import { Service } from "./entities/service.entity";
 import { ServiceFactory } from "./db/factories/service.factory";
 import { OrderFactory } from "./db/factories/order.factory";
 import { PerformerOrder } from "./entities/performerOrder.entity";
+import { PerformerOrderFactory } from "./db/factories/performerOrder.factory";
 import dotenv from "dotenv";
 import * as process from "process";
 
@@ -34,6 +35,7 @@ export const appDBConnect: DataSourceOptions & SeederOptions = {
     factories: [
         UserFactory,
         ServiceFactory,
-        OrderFactory
+        OrderFactory,
+        PerformerOrderFactory
     ]
 }

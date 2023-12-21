@@ -11,7 +11,7 @@ export const getLinks = (params: (IGetUserParams | IGetOrderParams) & { totalIte
         }
     });
 
-    const linkStr = `/${resourceType}?${searchParams.toString()}`;
+    const linkStr = `/${resourceType}?${searchParams.toString()}&`;
 
     const links: Record<string, string | null> = {
         next: offset + limit < totalItems ? `${linkStr}offset=${offset + limit}&limit=${limit}` : null,
@@ -22,7 +22,9 @@ export const getLinks = (params: (IGetUserParams | IGetOrderParams) & { totalIte
 
     for (let page = 1; page <= totalPages; page++) {
         const pageOffset = (page - 1) * limit;
-        links[`page${page}`] = `${linkStr}offset=${pageOffset}&limit=${limit}`;
+        if (totalPages !== 1) {
+            links[`page${page}`] = `${linkStr}offset=${pageOffset}&limit=${limit}`;
+        }
     }
 
     return links;

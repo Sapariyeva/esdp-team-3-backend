@@ -3,6 +3,12 @@ import { setSeederFactory } from 'typeorm-extension';
 import { Order } from '../../entities/order.entity';
 import { EOrderStatus } from '../../enum/EOrderStatus.enum';
 
+const getRandomEnumValue = <T extends Record<string, any>>(enumeration: T): T[keyof T] => {
+    const enumValues = Object.values(enumeration);
+    const randomIndex = Math.floor(Math.random() * enumValues.length);
+    return enumValues[randomIndex] as T[keyof T];
+}
+
 export const OrderFactory = setSeederFactory(Order, (faker: Faker) => {
     const order = new Order();
     order.serviceId = Math.random() < 0.5 ? 1 : 2;
@@ -17,7 +23,7 @@ export const OrderFactory = setSeederFactory(Order, (faker: Faker) => {
     order.lat = faker.location.latitude();
     order.lng = faker.location.longitude();
 
-    order.status = EOrderStatus.IN_PROGRESS;
+    order.status = getRandomEnumValue(EOrderStatus);
 
     return order;
 })

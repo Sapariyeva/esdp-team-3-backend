@@ -7,7 +7,12 @@ import { AuthService } from "../services/auth.service";
 import { getOrderParams } from "../dto/getOrderParams.dto";
 import { validate } from "class-validator";
 import { EOrderStatus } from "../enum/EOrderStatus.enum";
+import { OrderRepository } from "../repositories/order.repository";
+import { getCurrentDate } from "../helpers/getCurrentDate";
 import { RegisterUserByManager } from "../dto/registerUserByManager.dto";
+import * as fs from 'fs';
+import * as fastcsv from 'fast-csv';
+import path from 'path';
 
 export class OrderController {
     private service: OrderService;
@@ -47,19 +52,22 @@ export class OrderController {
 
     getOrders: RequestHandler = async (req, res, next): Promise<void> => {
         try {
-            const { customer, manager, performer, status } = req.query;
+            const { service, manager, customer, performer, status, sortBy } = req.query;
             const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
             const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+            const sortOrder = req.query.sortOrder ? req.query.sortOrder as "ASC" | "DESC" : "ASC";
             const plainData = {
-                customer: customer ? parseInt(customer as string) : null,
+                service: service ? parseInt(service as string) : null,
                 manager: manager ? parseInt(manager as string) : null,
+                customer: customer ? parseInt(customer as string) : null,
                 performer: performer ? parseInt(performer as string) : null,
-                status: status ? status as EOrderStatus : null
+                status: status ? status as EOrderStatus : null,
+                sortBy
             };
             const paramsDto = plainToInstance(getOrderParams, plainData);
             const errors = await validate(paramsDto);
             if (errors.length) throw errors;
-            const result = await this.service.getOrders({ ...paramsDto, offset, limit });
+            const result = await this.service.getOrders({ ...paramsDto, offset, limit, sortOrder });
 
             if (result.orders.length !== 0) {
                 res.send(result);
@@ -85,12 +93,89 @@ export class OrderController {
         }
     }
 
+    getOrderCSV: RequestHandler = async (req, res): Promise<void> => {
+        try {
+            const orderRepository = new OrderRepository();
+            const orders = await orderRepository.getOrdersCSV();
+
+            const formattedDateTime = getCurrentDate();
+
+            const csvFileName = `orders_${formattedDateTime}.csv`;
+            const csvFilePath = path.join(__dirname, '../..', 'csv', csvFileName);
+
+            const ws = fs.createWriteStream(csvFilePath);
+            const csvStream = fastcsv.format({ headers: true });
+            csvStream.pipe(ws);
+
+            orders.forEach(order => {
+                csvStream.write({
+                    'ID': order.id,
+                    'Дата создания': getCurrentDate(order.createdAt),
+                    'Заказчик': order.customer.displayName,
+                    'Телефон заказчика': `8${order.customer.phone}`,
+                    'Услуга': order.service.name,
+                    'Дата исполнения': getCurrentDate(order.orderData),
+                    'Адрес': order.address,
+                    'Описание': order.description,
+                    'Кол-во грузчиков': order.performersQuantity,
+                    'Откликнувшиеся грузчики': !order.performerOrders ? '' : order.performerOrders.reduce((acc, respond) =>
+                        `${acc}${respond.performer.displayName} (8${respond.performer.phone}),\n`,
+                        ''
+                    ),
+                    'Время работы': order.timeWorked,
+                    'Поступления': order.income,
+                    'Оплата грузчикам': order.performerPayment,
+                    'Налоги': order.tax,
+                    'Профит': order.profit,
+                    'Широта': order.lat,
+                    'Долгота': order.lng,
+                    'Менеджер': order.manager.displayName,
+                    'Телефон менеджера': `8${order.manager.phone}`,
+                    'Комментарий менеджера': order.managerCommentary,
+                    'Статус': order.status
+                });
+            });
+
+            csvStream.end();
+            ws.on('finish', () => {
+                console.log('CSV файл успешно создан.');
+                res.download(csvFilePath, csvFileName, (err) => {
+                    if (err) {
+                        console.error(err);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    } else {
+                        fs.unlinkSync(csvFilePath);
+                    }
+                });
+            });
+
+            ws.on('error', (error) => {
+                console.error(error);
+            });
+
+        } catch (e: any) {
+            console.log(e);
+            if (e.message) {
+                res.status(400).send({
+                    success: false,
+                    message: e.message
+                });
+            } else if (Array.isArray(e)) {
+                res.status(400).send(e);
+            } else {
+                res.status(500).send(e);
+            }
+        }
+    }
+
     createOrder: RequestHandler = async (req, res): Promise<void> => {
         try {
             const orderDto = plainToInstance(OrderDto, req.body);
             if (req.app.locals.user.role === ERole.manager || req.app.locals.user.role === ERole.admin) {
                 // Если заказ создает менеджер
-                orderDto.managerId = req.app.locals.user.id;
+                if (!orderDto.managerId) {
+                    orderDto.managerId = req.app.locals.user.id;
+                }
                 if (!orderDto.customerId) {
                     if (!orderDto.displayName || !orderDto.phone) {
                         res.status(400).send({

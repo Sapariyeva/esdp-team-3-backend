@@ -1,45 +1,44 @@
-import { Column, PrimaryGeneratedColumn, Entity, Unique, ManyToOne, JoinColumn } from 'typeorm';
-import { IPerformerOrder } from '../interfaces/IPerformerOrder.interface';
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Order } from './order.entity';
 import { User } from './user.entity';
 import { EPerformerOrderStatus } from '../enum/EPerformerOrderStatus.enum';
-import { Order } from './order.entity';
 
 @Entity()
-@Unique(['orderId', 'performerId'])
-export class PerformerOrder implements IPerformerOrder {
+@Index(['orderId', 'performerId'], { unique: true })
+export class PerformerOrder {
 	@PrimaryGeneratedColumn()
-	id!: number
+	id!: number;
 
 	@Column()
-	performerId!: number
+	performerId!: number;
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, user => user.performerOrders)
 	@JoinColumn({ name: 'performerId' })
-	performer!: User
+	performer!: User;
 
 	@Column()
-	orderId!: number
+	orderId!: number;
 
-	@ManyToOne(() => Order)
+	@ManyToOne(() => Order, order => order.performerOrders)
 	@JoinColumn({ name: 'orderId' })
-	order!: Order
+	order!: Order;
 
-    @Column({ type: "timestamp", nullable: true })
-    start!: string 
+	@Column({ type: 'timestamp', nullable: true })
+	start!: string;
 
-    @Column({ type: "timestamp", nullable: true })
-    end!: string 
+	@Column({ type: 'timestamp', nullable: true })
+	end!: string;
 
 	@Column({
-		type: "enum",
+		type: 'enum',
 		enum: EPerformerOrderStatus,
-		default: EPerformerOrderStatus.WAITING
+		default: EPerformerOrderStatus.WAITING,
 	})
 	status!: EPerformerOrderStatus;
 
 	@Column({ nullable: true })
-	performerRating!: number
+	performerRating!: number;
 
 	@Column({ nullable: true })
-	customerRating!: number
+	customerRating!: number;
 }

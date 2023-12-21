@@ -14,9 +14,27 @@ export class OrderRepository extends Repository<Order> {
     }
 
     async getOrders(params: IGetOrderParams): Promise<IOrderList> {
-        const { offset, limit, manager, customer, status } = params;
+        const {
+            offset,
+            limit,
+            service,
+            manager,
+            customer,
+            performer,
+            status,
+            sortBy,
+            sortOrder
+        } = params;
 
-        const queryBuilder = this.createQueryBuilder("order");
+        const queryBuilder = this.createQueryBuilder("order")
+            .leftJoinAndSelect('order.customer', 'customer')
+            .leftJoinAndSelect('order.manager', 'manager')
+            .leftJoinAndSelect('order.performerOrders', 'performerOrder')
+            .leftJoinAndSelect('performerOrder.performer', 'performer');
+
+        if (service) {
+            queryBuilder.andWhere("order.serviceId = :service", { service });
+        }
 
         if (manager) {
             queryBuilder.andWhere("order.managerId = :manager", { manager });
@@ -26,14 +44,22 @@ export class OrderRepository extends Repository<Order> {
             queryBuilder.andWhere("order.customerId = :customer", { customer });
         }
 
-        // Раскомментировать когда будет готов performerOrder
-        // if (performer) {
-        //     queryBuilder.innerJoin("performer_order", "po", "po.orderId = order.id")
-        //         .andWhere("po.performerId = :performer", { performer });
-        // }
+        if (performer) {
+            queryBuilder
+                .leftJoin('order.performerOrders', 'otherPerformerOrder')
+                .andWhere('otherPerformerOrder.performerId = :performer', { performer });
+        }
 
         if (status) {
             queryBuilder.andWhere("order.status = :status", { status });
+        }
+
+        if (sortBy && sortOrder) {
+            if (sortBy === 'manager' || sortBy === 'customer' || sortBy === 'performer') {
+                queryBuilder.orderBy(`${sortBy}.displayName`, sortOrder);
+            } else {
+                queryBuilder.orderBy(`order.${sortBy}`, sortOrder);
+            }
         }
 
         const totalItems = await queryBuilder.getCount();
@@ -47,6 +73,17 @@ export class OrderRepository extends Repository<Order> {
         return await this.findOne({
             where: { id }
         })
+    }
+
+    async getOrdersCSV(): Promise<Order[]> {
+        const orders = await this.createQueryBuilder('order')
+            .leftJoinAndSelect('order.service', 'service')
+            .leftJoinAndSelect('order.customer', 'customer')
+            .leftJoinAndSelect('order.manager', 'manager')
+            .leftJoinAndSelect('order.performerOrders', 'performerOrder')
+            .leftJoinAndSelect('performerOrder.performer', 'performer')
+            .getMany();
+        return orders;
     }
 
     async createOrder(data: OrderDto): Promise<IOrder> {

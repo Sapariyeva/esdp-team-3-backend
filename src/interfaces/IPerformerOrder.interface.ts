@@ -1,3 +1,4 @@
+import { Order } from "../entities/order.entity";
 import { User } from "../entities/user.entity";
 import { EPerformerOrderStatus } from "../enum/EPerformerOrderStatus.enum";
 
@@ -10,5 +11,6 @@ export interface IPerformerOrder {
 	status: EPerformerOrderStatus;
 	performerRating: number;
 	customerRating: number;
-	performer: User
+	performer: User;
+	order: Order;
 }

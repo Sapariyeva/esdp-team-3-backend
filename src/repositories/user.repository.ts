@@ -10,8 +10,8 @@ import { IGetUserParams } from '../interfaces/IGetParams';
 import { IUserList } from '../interfaces/IList.interface';
 import { getLinks } from '../helpers/getLinks';
 import { EUserStatus } from '../enum/EUserStatus.enum';
-import bcrypt from 'bcrypt';
 import { RegisterUserByManager } from '../dto/registerUserByManager.dto';
+import bcrypt from 'bcrypt';
 
 export class UserRepository extends Repository<User> {
     constructor() {
@@ -67,6 +67,25 @@ export class UserRepository extends Repository<User> {
         const links = getLinks({ totalItems, ...params }, 'user');
 
         return { users, totalItems, totalPages: Math.ceil(totalItems / limit), links };
+    }
+
+    async getUserCSV(): Promise<IUserWithoutPass[]> {
+        const users = await this.createQueryBuilder('user')
+            .select([
+                'user.id',
+                'user.phone',
+                'user.displayName',
+                'user.email',
+                'user.birthday',
+                'user.role',
+                'user.avgRating',
+                'user.ratingCount',
+                'user.lastPosition',
+                'user.identifyingNumber',
+                'user.status'
+            ])
+            .getMany();
+        return users;
     }
 
     async signInWithRole(userDto: UserWithRoleDto): Promise<IUserWithoutPass> {
