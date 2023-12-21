@@ -70,9 +70,15 @@ export class OrderRepository extends Repository<Order> {
     }
 
     async getOrderById(id: number): Promise<IOrder | null> {
-        return await this.findOne({
-            where: { id }
-        })
+        const order = await this.createQueryBuilder('order')
+            .leftJoinAndSelect('order.service', 'service')
+            .leftJoinAndSelect('order.customer', 'customer')
+            .leftJoinAndSelect('order.manager', 'manager')
+            .leftJoinAndSelect('order.performerOrders', 'performerOrder')
+            .leftJoinAndSelect('performerOrder.performer', 'performer')
+            .where("order.id = :id", { id })
+            .getOne();
+        return order;
     }
 
     async getOrdersCSV(): Promise<Order[]> {
