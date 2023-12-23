@@ -15,10 +15,10 @@ export class OrderRoute implements IRoute {
     }
 
     private init() {
-        this.router.get('/export-csv', this.controller.getOrderCSV);
         this.router.get('/', roleChecker([ERole.admin, ERole.manager, ERole.customer, ERole.performer]), this.controller.getOrders);
         this.router.get('/:id', roleChecker([ERole.admin, ERole.manager, ERole.customer, ERole.performer]), this.controller.getOrder);
         this.router.post('/', roleChecker([ERole.admin, ERole.manager, ERole.customer]), this.controller.createOrder);
         this.router.patch('/:id/cancel', roleChecker([ERole.admin, ERole.manager, ERole.customer]), this.controller.cancelOrder);
+        this.router.get('/export-csv', roleChecker([ERole.admin, ERole.manager]), this.controller.getOrderCSV);
     }
 }

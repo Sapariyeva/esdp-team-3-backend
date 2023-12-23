@@ -17,11 +17,11 @@ export interface IGetOrderParams extends IGetParams {
     status?: EOrderStatus | null;
 }
 
-export interface IGetUserParams {
-    offset: number;
-    limit: number;
+export interface IGetUserParams extends IGetParams {
+    displayName?: string | null;
     phone?: string | null;
     email?: string | null;
     role?: ERole | null;
+    identifyingNumber?: string | null;
     status?: EUserStatus | null;
 }

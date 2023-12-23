@@ -13,20 +13,31 @@ import { EUserStatus } from '../enum/EUserStatus.enum';
 import { RegisterUserByManager } from '../dto/registerUserByManager.dto';
 import bcrypt from 'bcrypt';
 
+const userFieldsWithoutPass = [
+    'user.id',
+    'user.phone',
+    'user.displayName',
+    'user.email',
+    'user.birthday',
+    'user.role',
+    'user.avgRating',
+    'user.ratingCount',
+    'user.lastPosition',
+    'user.identifyingNumber',
+    'user.status'
+];
+
 export class UserRepository extends Repository<User> {
     constructor() {
         super(User, appDataSource.createEntityManager());
     }
 
     async getUserById(id: number): Promise<IUserWithoutPass | null> {
-        const user = await this.findOne({
-            where: { id }
-        })
-        if (user) {
-            const { password, ...userWithoutPass } = user;
-            return userWithoutPass;
-        }
-        return user
+        const users = await this.createQueryBuilder("user")
+            .select(userFieldsWithoutPass)
+            .where("user.id = :id", { id })
+            .getOne();
+        return users;
     }
 
     async getUserByIdAndRole(id: number, role: ERole): Promise<IUser | null> {
@@ -42,16 +53,35 @@ export class UserRepository extends Repository<User> {
     }
 
     async getUsers(params: IGetUserParams): Promise<IUserList> {
-        const { offset, limit, phone, email, role, status } = params;
+        const {
+            offset,
+            limit,
+            displayName,
+            phone,
+            email,
+            identifyingNumber,
+            role,
+            status,
+            sortBy,
+            sortOrder
+        } = params;
 
         const queryBuilder = this.createQueryBuilder("user");
 
+        if (displayName) {
+            queryBuilder.andWhere("user.displayName LIKE :displayName", { displayName: `%${displayName}%` });
+        }
+
         if (phone) {
-            queryBuilder.andWhere("user.phone = :phone", { phone });
+            queryBuilder.andWhere("user.phone LIKE :phone", { phone: `%${phone}%` });
         }
 
         if (email) {
-            queryBuilder.andWhere("user.email = :email", { email });
+            queryBuilder.andWhere("user.email LIKE :email", { email: `%${email}%` });
+        }
+
+        if (identifyingNumber) {
+            queryBuilder.andWhere("user.identifyingNumber LIKE :identifyingNumber", { identifyingNumber: `%${identifyingNumber}%` });
         }
 
         if (role) {
@@ -62,30 +92,25 @@ export class UserRepository extends Repository<User> {
             queryBuilder.andWhere("user.status = :status", { status });
         }
 
+        if (sortBy && sortOrder) {
+            queryBuilder.orderBy(`user.${sortBy}`, sortOrder);
+        }
+
         const totalItems = await queryBuilder.getCount();
-        const users = await queryBuilder.skip(offset).take(limit).getMany();
+        const users = await queryBuilder
+            .skip(offset)
+            .take(limit)
+            .select(userFieldsWithoutPass)
+            .getMany();
         const links = getLinks({ totalItems, ...params }, 'user');
 
         return { users, totalItems, totalPages: Math.ceil(totalItems / limit), links };
     }
 
     async getUserCSV(): Promise<IUserWithoutPass[]> {
-        const users = await this.createQueryBuilder('user')
-            .select([
-                'user.id',
-                'user.phone',
-                'user.displayName',
-                'user.email',
-                'user.birthday',
-                'user.role',
-                'user.avgRating',
-                'user.ratingCount',
-                'user.lastPosition',
-                'user.identifyingNumber',
-                'user.status'
-            ])
+        return await this.createQueryBuilder('user')
+            .select(userFieldsWithoutPass)
             .getMany();
-        return users;
     }
 
     async signInWithRole(userDto: UserWithRoleDto): Promise<IUserWithoutPass> {
