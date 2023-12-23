@@ -62,7 +62,7 @@ export class AuthController {
             if (result.users.length !== 0) {
                 res.send(result);
             } else {
-                res.status(400).send({
+                res.send({
                     success: false,
                     message: 'Users not found'
                 });

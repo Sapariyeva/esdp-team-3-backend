@@ -31,7 +31,7 @@ export class OrderController {
             } else {
                 res.status(400).send({
                     success: false,
-                    message: 'orders not found'
+                    message: 'order not found'
                 });
             }
         } catch (e: any) {
@@ -72,7 +72,7 @@ export class OrderController {
             if (result.orders.length !== 0) {
                 res.send(result);
             } else {
-                res.status(400).send({
+                res.send({
                     success: false,
                     message: 'Orders not found'
                 });
