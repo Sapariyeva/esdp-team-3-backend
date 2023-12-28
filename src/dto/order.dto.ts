@@ -1,5 +1,5 @@
-import { Expose } from "class-transformer";
-import { IOrder } from "../interfaces/IOrder.interface";
+import { Expose } from 'class-transformer';
+import { IOrder } from '@/interfaces/IOrder.interface';
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class OrderDto implements IOrder {

@@ -1,15 +1,15 @@
-import { RequestHandler } from "express";
-import { OrderService } from "../services/order.service";
-import { OrderDto } from "../dto/order.dto";
-import { plainToInstance } from "class-transformer";
-import { ERole } from "../enum/ERole.enum";
-import { AuthService } from "../services/auth.service";
-import { getOrderParams } from "../dto/getOrderParams.dto";
-import { validate } from "class-validator";
-import { EOrderStatus } from "../enum/EOrderStatus.enum";
-import { OrderRepository } from "../repositories/order.repository";
-import { getCurrentDate } from "../helpers/getCurrentDate";
-import { RegisterUserByManager } from "../dto/registerUserByManager.dto";
+import { RequestHandler } from 'express';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
+import { OrderService } from '@/services/order.service';
+import { OrderDto } from '@/dto/order.dto';
+import { ERole } from '@/enum/ERole.enum';
+import { AuthService } from '@/services/auth.service';
+import { getOrderParams } from '@/dto/getOrderParams.dto';
+import { EOrderStatus } from '@/enum/EOrderStatus.enum';
+import { OrderRepository } from '@/repositories/order.repository';
+import { getCurrentDate } from '@/helpers/getCurrentDate';
+import { RegisterUserByManager } from '@/dto/registerUserByManager.dto';
 import * as fs from 'fs';
 import * as fastcsv from 'fast-csv';
 import path from 'path';
@@ -55,7 +55,7 @@ export class OrderController {
             const { service, manager, customer, performer, status, sortBy } = req.query;
             const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
             const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
-            const sortOrder = req.query.sortOrder ? req.query.sortOrder as "ASC" | "DESC" : "ASC";
+            const sortOrder = req.query.sortOrder ? req.query.sortOrder as 'ASC' | 'DESC' : 'ASC';
             const plainData = {
                 service: service ? parseInt(service as string) : null,
                 manager: manager ? parseInt(manager as string) : null,
@@ -140,13 +140,13 @@ export class OrderController {
             ws.on('finish', () => {
                 console.log('CSV файл успешно создан.');
                 res.download(csvFilePath, csvFileName, (err) => {
-                    if (err) {
-                        console.error(err);
-                        res.status(500).json({ error: 'Internal Server Error' });
-                    } else {
-                        fs.unlinkSync(csvFilePath);
-                    }
-                });
+                        if (err) {
+                            console.error(err);
+                            res.status(500).json({ error: 'Internal Server Error' });
+                        } else {
+                            fs.unlinkSync(csvFilePath);
+                        }
+                    });
             });
 
             ws.on('error', (error) => {

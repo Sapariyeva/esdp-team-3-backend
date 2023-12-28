@@ -1,7 +1,7 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Order } from './order.entity';
-import { User } from './user.entity';
-import { EPerformerOrderStatus } from '../enum/EPerformerOrderStatus.enum';
+import { Order } from '@/entities/order.entity';
+import { User } from '@/entities/user.entity';
+import { EPerformerOrderStatus } from '@/enum/EPerformerOrderStatus.enum';
 
 @Entity()
 @Index(['orderId', 'performerId'], { unique: true })

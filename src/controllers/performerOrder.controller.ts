@@ -1,13 +1,13 @@
 import { RequestHandler } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { ArrivalNotificationDto } from '../dto/arrivalNotification.dto';
-import { CompletionNotificationDto } from '../dto/completionNotification.dto';
-import { OrderResponseDto } from '../dto/orderResponse.dto';
-import { PerformerOrderService } from '../services/performerOrder.service';
-import { PerformerOrderRepository } from '../repositories/performerOrder.repository';
-import { OrderRejectionDto } from '../dto/orderRejection.dto';
-import { OrderRepository } from '../repositories/order.repository';
-import { UserRepository } from '../repositories/user.repository';
+import { ArrivalNotificationDto } from '@/dto/arrivalNotification.dto';
+import { CompletionNotificationDto } from '@/dto/completionNotification.dto';
+import { OrderResponseDto } from '@/dto/orderResponse.dto';
+import { PerformerOrderService } from '@/services/performerOrder.service';
+import { PerformerOrderRepository } from '@/repositories/performerOrder.repository';
+import { OrderRejectionDto } from '@/dto/orderRejection.dto';
+import { OrderRepository } from '@/repositories/order.repository';
+import { UserRepository } from '@/repositories/user.repository';
 
 export class PerformerOrderController {
   private repository: PerformerOrderRepository;
@@ -23,16 +23,16 @@ export class PerformerOrderController {
   }
 
 
-	respondToOrder: RequestHandler = async (req, res, next): Promise<void> => {
-		try {
-			const responseDto = plainToInstance(OrderResponseDto, req.body);
-			const order = await this.orderRepository.findOne({ where: { id: responseDto.orderId } });
-			if (!order) {
-				res.status(400).send({
-					success: false,
-					message: 'there is no such order'
-				});
-			}
+  respondToOrder: RequestHandler = async (req, res, next): Promise<void> => {
+    try {
+      const responseDto = plainToInstance(OrderResponseDto, req.body);
+      const order = await this.orderRepository.findOne({ where: { id: responseDto.orderId } });
+      if (!order) {
+        res.status(400).send({
+          success: false,
+          message: 'there is no such order'
+        });
+      }
       const user = await this.userRepository.findOne({ where: { id: responseDto.performerId } });
 
       if (!user) {
@@ -49,16 +49,16 @@ export class PerformerOrderController {
     }
   }
 
-    deleteOrder: RequestHandler = async (req, res, next): Promise<void> => {
-        try {
-            const { id } = req.params;
-            const deletionDto = plainToInstance(OrderRejectionDto, { id: Number(id) });
-            await this.service.deletePerformerOrder(deletionDto);
-            res.sendStatus(200);
-        } catch (e) {
-            next(e);
-        }
+  deleteOrder: RequestHandler = async (req, res, next): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const deletionDto = plainToInstance(OrderRejectionDto, { id: Number(id) });
+      await this.service.deletePerformerOrder(deletionDto);
+      res.sendStatus(200);
+    } catch (e) {
+      next(e);
     }
+  }
 
   rejectOrder: RequestHandler = async (req, res, next): Promise<void> => {
     try {
@@ -84,17 +84,17 @@ export class PerformerOrderController {
     }
   }
 
-    notifyStart: RequestHandler = async (req, res, next): Promise<void> => {
-        try {
-            const { id } = req.params;
-            const startDto = plainToInstance(CompletionNotificationDto, req.body);
-            startDto.id = Number(id);
-            const startNotification = await this.service.notifyStart(startDto);
-            res.send(startNotification);
-        } catch (e) {
-            next(e);
-        }
+  notifyStart: RequestHandler = async (req, res, next): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const startDto = plainToInstance(CompletionNotificationDto, req.body);
+      startDto.id = Number(id);
+      const startNotification = await this.service.notifyStart(startDto);
+      res.send(startNotification);
+    } catch (e) {
+      next(e);
     }
+  }
 
   notifyCompletion: RequestHandler = async (req, res, next): Promise<void> => {
     try {

@@ -1,9 +1,9 @@
 import express from 'express';
 import { Application, RequestHandler } from 'express';
-import { AppInit } from './interfaces/AppInit.interface';
-import { IRoute } from './interfaces/IRoute.interface';
-import { errorHandler } from './middlewares/errorHandler';
-import { appDataSource } from './dataSource';
+import { AppInit } from '@/interfaces/AppInit.interface';
+import { IRoute } from '@/interfaces/IRoute.interface';
+import { errorHandler } from '@/middlewares/errorHandler';
+import { appDataSource } from '@/dataSource';
 
 class App {
   public app: Application;

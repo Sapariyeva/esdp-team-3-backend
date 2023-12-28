@@ -1,7 +1,7 @@
 import { Expose } from 'class-transformer';
 import { IsByteLength, IsEnum, IsOptional, IsString, Matches } from "class-validator";
-import { ERole } from '../enum/ERole.enum';
-import { EUserStatus } from '../enum/EUserStatus.enum';
+import { ERole } from '@/enum/ERole.enum';
+import { EUserStatus } from '@/enum/EUserStatus.enum';
 
 export class getUserParams {
     @Expose()

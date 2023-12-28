@@ -1,12 +1,12 @@
 import { Repository } from 'typeorm';
-import { appDataSource } from '../dataSource';
-import { Order } from '../entities/order.entity';
-import { IOrder } from '../interfaces/IOrder.interface';
-import { EOrderStatus } from '../enum/EOrderStatus.enum';
-import { OrderDto } from '../dto/order.dto';
-import { IOrderList } from '../interfaces/IList.interface';
-import { IGetOrderParams } from '../interfaces/IGetParams';
-import { getLinks } from '../helpers/getLinks';
+import { appDataSource } from '@/dataSource';
+import { Order } from '@/entities/order.entity';
+import { IOrder } from '@/interfaces/IOrder.interface';
+import { EOrderStatus } from '@/enum/EOrderStatus.enum';
+import { OrderDto } from '@/dto/order.dto';
+import { IOrderList } from '@/interfaces/IList.interface';
+import { IGetOrderParams } from '@/interfaces/IGetParams';
+import { getLinks } from '@/helpers/getLinks';
 
 export class OrderRepository extends Repository<Order> {
     constructor() {

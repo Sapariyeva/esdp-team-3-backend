@@ -1,24 +1,24 @@
-import { OrderResponseDto } from '../dto/orderResponse.dto';
-import { ArrivalNotificationDto } from '../dto/arrivalNotification.dto';
-import { CompletionNotificationDto } from '../dto/completionNotification.dto';
-import { PerformerOrderRepository } from '../repositories/performerOrder.repository';
-import { OrderRejectionDto } from '../dto/orderRejection.dto';
-import { IPerformerOrder } from '../interfaces/IPerformerOrder.interface';
-import { EPerformerOrderStatus } from '../enum/EPerformerOrderStatus.enum';
+import { OrderResponseDto } from '@/dto/orderResponse.dto';
+import { ArrivalNotificationDto } from '@/dto/arrivalNotification.dto';
+import { CompletionNotificationDto } from '@/dto/completionNotification.dto';
+import { PerformerOrderRepository } from '@/repositories/performerOrder.repository';
+import { OrderRejectionDto } from '@/dto/orderRejection.dto';
+import { IPerformerOrder } from '@/interfaces/IPerformerOrder.interface';
+import { EPerformerOrderStatus } from '@/enum/EPerformerOrderStatus.enum';
 import { validate } from 'class-validator';
 
 export class PerformerOrderService {
-	private repository: PerformerOrderRepository;
+    private repository: PerformerOrderRepository;
 
-	constructor(repository: PerformerOrderRepository) {
-		this.repository = repository;
-	}
+    constructor(repository: PerformerOrderRepository) {
+        this.repository = repository;
+    }
 
-	respondToOrder = async (responseDto: OrderResponseDto): Promise<IPerformerOrder> => {
-		const errors = await validate(responseDto);
-		if (errors.length) throw errors;
-		return await this.repository.createPerformerOrder(responseDto);
-	}
+    respondToOrder = async (responseDto: OrderResponseDto): Promise<IPerformerOrder> => {
+        const errors = await validate(responseDto);
+        if (errors.length) throw errors;
+        return await this.repository.createPerformerOrder(responseDto);
+    }
 
 
     deletePerformerOrder = async (deletionDto: OrderRejectionDto): Promise<void> => {

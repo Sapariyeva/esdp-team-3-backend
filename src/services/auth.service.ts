@@ -1,14 +1,14 @@
-import { SignInUserDto } from '../dto/signInUser.dto';
-import { RegisterUserDto } from '../dto/registerUser.dto';
-import { IUser, IUserWithTokens, IUserWithoutPass } from '../interfaces/IUser.interface';
-import { UserRepository } from '../repositories/user.repository';
-import { ERole } from '../enum/ERole.enum';
-import { UserWithRoleDto } from '../dto/userWithRole.dto';
+import { SignInUserDto } from '@/dto/signInUser.dto';
+import { RegisterUserDto } from '@/dto/registerUser.dto';
+import { IUser, IUserWithTokens, IUserWithoutPass } from '@/interfaces/IUser.interface';
+import { UserRepository } from '@/repositories/user.repository';
+import { ERole } from '@/enum/ERole.enum';
+import { UserWithRoleDto } from '@/dto/userWithRole.dto';
 import { validate } from 'class-validator';
-import { TokenService } from './token.service';
-import { IGetUserParams } from '../interfaces/IGetParams';
-import { IUserList } from '../interfaces/IList.interface';
-import { RegisterUserByManager } from '../dto/registerUserByManager.dto';
+import { TokenService } from '@/services/token.service';
+import { IGetUserParams } from '@/interfaces/IGetParams';
+import { IUserList } from '@/interfaces/IList.interface';
+import { RegisterUserByManager } from '@/dto/registerUserByManager.dto';
 
 export class AuthService {
     private repository: UserRepository;

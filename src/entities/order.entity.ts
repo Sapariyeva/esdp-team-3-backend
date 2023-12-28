@@ -1,9 +1,9 @@
 import { Column, PrimaryGeneratedColumn, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { IOrder } from '../interfaces/IOrder.interface';
-import { Service } from './service.entity';
-import { User } from './user.entity';
-import { EOrderStatus } from '../enum/EOrderStatus.enum';
-import { PerformerOrder } from './performerOrder.entity';
+import { IOrder } from '@/interfaces/IOrder.interface';
+import { Service } from '@/entities/service.entity';
+import { User } from '@/entities/user.entity';
+import { EOrderStatus } from '@/enum/EOrderStatus.enum';
+import { PerformerOrder } from '@/entities/performerOrder.entity';
 
 @Entity()
 export class Order implements IOrder {

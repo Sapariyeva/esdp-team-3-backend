@@ -1,5 +1,5 @@
-import { IOrder } from "./IOrder.interface";
-import { IUserWithoutPass } from "./IUser.interface";
+import { IOrder } from '@/interfaces/IOrder.interface';
+import { IUserWithoutPass } from '@/interfaces/IUser.interface';
 
 interface IList {
     totalItems: number;

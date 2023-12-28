@@ -1,5 +1,5 @@
 import { Column, PrimaryGeneratedColumn, Entity, Unique } from 'typeorm';
-import { IService } from '../interfaces/IService.interface';
+import { IService } from '@/interfaces/IService.interface';
 
 @Entity()
 @Unique(['name'])

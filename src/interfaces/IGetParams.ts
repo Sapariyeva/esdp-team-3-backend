@@ -1,6 +1,6 @@
-import { EOrderStatus } from "../enum/EOrderStatus.enum";
-import { ERole } from "../enum/ERole.enum";
-import { EUserStatus } from "../enum/EUserStatus.enum";
+import { EOrderStatus } from '@/enum/EOrderStatus.enum';
+import { ERole } from '@/enum/ERole.enum';
+import { EUserStatus } from '@/enum/EUserStatus.enum';
 
 interface IGetParams {
     offset: number;

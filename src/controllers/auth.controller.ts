@@ -1,19 +1,19 @@
-import { RequestHandler } from "express";
-import { AuthService } from "../services/auth.service";
+import { RequestHandler } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { SignInUserDto } from "../dto/signInUser.dto";
-import { RegisterUserDto } from "../dto/registerUser.dto";
-import { UserWithRoleDto } from "../dto/userWithRole.dto";
-import { formatErrors } from "../helpers/formatErrors";
-import { validate } from "class-validator";
-import { getUserParams } from "../dto/getUserParams.dto";
-import dotenv from "dotenv";
-import * as process from "process";
-import { UserRepository } from "../repositories/user.repository";
+import { validate } from 'class-validator';
+import { AuthService } from '@/services/auth.service';
+import { SignInUserDto } from '@/dto/signInUser.dto';
+import { RegisterUserDto } from '@/dto/registerUser.dto';
+import { UserWithRoleDto } from '@/dto/userWithRole.dto';
+import { formatErrors } from '@/helpers/formatErrors';
+import { UserRepository } from '@/repositories/user.repository';
+import { getUserParams } from '@/dto/getUserParams.dto';
+import { getCurrentDate } from '@/helpers/getCurrentDate';
+import dotenv from 'dotenv';
+import * as process from 'process';
 import * as fs from 'fs';
 import * as fastcsv from 'fast-csv';
 import path from 'path';
-import { getCurrentDate } from "../helpers/getCurrentDate";
 
 dotenv.config();
 

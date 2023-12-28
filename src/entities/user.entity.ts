@@ -1,8 +1,8 @@
 import { Column, PrimaryGeneratedColumn, Entity, Unique, OneToMany } from 'typeorm';
-import { IUser } from '../interfaces/IUser.interface';
-import { ERole } from '../enum/ERole.enum';
-import { EUserStatus } from '../enum/EUserStatus.enum';
-import { PerformerOrder } from './performerOrder.entity';
+import { IUser } from '@/interfaces/IUser.interface';
+import { ERole } from '@/enum/ERole.enum';
+import { EUserStatus } from '@/enum/EUserStatus.enum';
+import { PerformerOrder } from '@/entities/performerOrder.entity';
 import bcrypt from 'bcrypt'
 
 @Entity()

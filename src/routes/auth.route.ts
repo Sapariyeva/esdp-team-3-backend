@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { IRoute } from '../interfaces/IRoute.interface';
-import { AuthController } from "../controllers/auth.controller";
+import { IRoute } from '@/interfaces/IRoute.interface';
+import { AuthController } from "@/controllers/auth.controller";
 
 export class AuthRoute implements IRoute {
     public path = '/user';

@@ -1,7 +1,7 @@
 import { Faker } from '@faker-js/faker';
 import { setSeederFactory } from 'typeorm-extension';
-import { User } from '../../entities/user.entity';
-import { ERole } from '../../enum/ERole.enum';
+import { User } from '@/entities/user.entity';
+import { ERole } from '@/enum/ERole.enum';
 
 const roles = [ERole.admin, ERole.manager, ERole.customer, ERole.performer];
 

@@ -1,8 +1,8 @@
 import { Expose } from 'class-transformer';
 import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
-import { EOrderStatus } from '../enum/EOrderStatus.enum';
-import { IsUserExist } from '../decorators/IsUserExist.decorator';
-import { ERole } from '../enum/ERole.enum';
+import { EOrderStatus } from '@/enum/EOrderStatus.enum';
+import { IsUserExist } from '@/decorators/IsUserExist.decorator';
+import { ERole } from '@/enum/ERole.enum';
 
 export class getOrderParams {
     @Expose()

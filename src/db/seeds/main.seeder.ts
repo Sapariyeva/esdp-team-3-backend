@@ -1,13 +1,13 @@
 import { DataSource } from 'typeorm';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
-import { User } from '../../entities/user.entity';
-import { ERole } from '../../enum/ERole.enum';
-import { Service } from '../../entities/service.entity';
-import { Order } from '../../entities/order.entity';
-import { IUser } from '../../interfaces/IUser.interface';
-import { IService } from '../../interfaces/IService.interface';
-import { PerformerOrder } from '../../entities/performerOrder.entity';
-import { IOrder } from '../../interfaces/IOrder.interface';
+import { User } from '@/entities/user.entity';
+import { ERole } from '@/enum/ERole.enum';
+import { Service } from '@/entities/service.entity';
+import { Order } from '@/entities/order.entity';
+import { IUser } from '@/interfaces/IUser.interface';
+import { IService } from '@/interfaces/IService.interface';
+import { PerformerOrder } from '@/entities/performerOrder.entity';
+import { IOrder } from '@/interfaces/IOrder.interface';
 
 const managers: IUser[] = [];
 const customers: IUser[] = [];

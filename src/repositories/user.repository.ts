@@ -1,16 +1,16 @@
-import { IUser, IUserWithoutPass } from '../interfaces/IUser.interface';
+import { IUser, IUserWithoutPass } from '@/interfaces/IUser.interface';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
-import { appDataSource } from '../dataSource';
-import { SignInUserDto } from '../dto/signInUser.dto';
-import { RegisterUserDto } from '../dto/registerUser.dto';
-import { ERole } from '../enum/ERole.enum';
-import { UserWithRoleDto } from '../dto/userWithRole.dto';
-import { IGetUserParams } from '../interfaces/IGetParams';
-import { IUserList } from '../interfaces/IList.interface';
-import { getLinks } from '../helpers/getLinks';
-import { EUserStatus } from '../enum/EUserStatus.enum';
-import { RegisterUserByManager } from '../dto/registerUserByManager.dto';
+import { User } from '@/entities/user.entity';
+import { appDataSource } from '@/dataSource';
+import { SignInUserDto } from '@/dto/signInUser.dto';
+import { RegisterUserDto } from '@/dto/registerUser.dto';
+import { ERole } from '@/enum/ERole.enum';
+import { UserWithRoleDto } from '@/dto/userWithRole.dto';
+import { IGetUserParams } from '@/interfaces/IGetParams';
+import { IUserList } from '@/interfaces/IList.interface';
+import { getLinks } from '@/helpers/getLinks';
+import { EUserStatus } from '@/enum/EUserStatus.enum';
+import { RegisterUserByManager } from '@/dto/registerUserByManager.dto';
 import bcrypt from 'bcrypt';
 
 const userFieldsWithoutPass = [

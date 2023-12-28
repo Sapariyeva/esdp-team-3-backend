@@ -1,5 +1,5 @@
-import { IUserWithoutPass } from '../interfaces/IUser.interface';
-import { redisClient } from './redis.service';
+import { IUserWithoutPass } from '@/interfaces/IUser.interface';
+import { redisClient } from '@/services/redis.service';
 import { sign, verify } from 'jsonwebtoken';
 import dotenv from "dotenv";
 import * as process from "process";

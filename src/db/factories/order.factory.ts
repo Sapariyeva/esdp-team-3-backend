@@ -1,7 +1,7 @@
 import { Faker } from '@faker-js/faker';
 import { setSeederFactory } from 'typeorm-extension';
-import { Order } from '../../entities/order.entity';
-import { EOrderStatus } from '../../enum/EOrderStatus.enum';
+import { Order } from '@/entities/order.entity';
+import { EOrderStatus } from '@/enum/EOrderStatus.enum';
 
 const getRandomEnumValue = <T extends Record<string, any>>(enumeration: T): T[keyof T] => {
     const enumValues = Object.values(enumeration);

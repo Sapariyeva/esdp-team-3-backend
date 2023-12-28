@@ -1,4 +1,4 @@
-import { IGetOrderParams, IGetUserParams } from "../interfaces/IGetParams";
+import { IGetOrderParams, IGetUserParams } from '@/interfaces/IGetParams';
 
 export const getLinks = (params: (IGetUserParams | IGetOrderParams) & { totalItems: number }, resourceType: 'user' | 'order'): Record<string, string | null> => {
     const { totalItems, offset, limit, ...restParams } = params;

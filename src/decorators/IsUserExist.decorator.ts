@@ -5,8 +5,8 @@ import {
     ValidatorConstraintInterface,
     ValidationArguments,
 } from 'class-validator';
-import { UserRepository } from '../repositories/user.repository';
-import { ERole } from '../enum/ERole.enum';
+import { UserRepository } from '@/repositories/user.repository';
+import { ERole } from '@/enum/ERole.enum';
 
 @ValidatorConstraint({ async: true })
 export class IsUserExistConstraint implements ValidatorConstraintInterface {

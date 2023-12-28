@@ -1,5 +1,5 @@
-import { ERole } from "../enum/ERole.enum";
-import { EUserStatus } from "../enum/EUserStatus.enum";
+import { ERole } from '@/enum/ERole.enum';
+import { EUserStatus } from '@/enum/EUserStatus.enum';
 
 export interface IUserWithoutPass {
     id: number;

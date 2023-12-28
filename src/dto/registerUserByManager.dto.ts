@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 import { IsByteLength, IsEnum, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
-import { ERole } from '../enum/ERole.enum';
+import { ERole } from '@/enum/ERole.enum';
 
 export class RegisterUserByManager {
 	@Expose()

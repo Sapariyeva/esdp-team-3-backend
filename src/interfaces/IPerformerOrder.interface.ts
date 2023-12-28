@@ -1,6 +1,6 @@
-import { Order } from "../entities/order.entity";
-import { User } from "../entities/user.entity";
-import { EPerformerOrderStatus } from "../enum/EPerformerOrderStatus.enum";
+import { Order } from '@/entities/order.entity';
+import { User } from '@/entities/user.entity';
+import { EPerformerOrderStatus } from '@/enum/EPerformerOrderStatus.enum';
 
 export interface IPerformerOrder {
 	id: number;

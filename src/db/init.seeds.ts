@@ -1,4 +1,4 @@
-import { appDataSource } from "../dataSource";
+import { appDataSource } from "@/dataSource";
 import { runSeeders } from "typeorm-extension";
 
 appDataSource.initialize().then(async () => {
