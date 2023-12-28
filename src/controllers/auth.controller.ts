@@ -255,7 +255,7 @@ export class AuthController {
         } catch (e: any) {
             console.log(e);
             if ((e as { code: string }).code === 'ER_DUP_ENTRY') {
-                res.send({
+                res.status(400).send({
                     success: false,
                     message: 'User already exists',
                     errors: [
