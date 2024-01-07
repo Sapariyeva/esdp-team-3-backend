@@ -176,6 +176,35 @@
   }
   ```
 
+### ```/user/addUser```  - добавление(создание) нового пользователя, права на использование данного роута есть только у администратора и менеджеров.
+Тело запроса должно содержать поля в формате JSON:
+ - **```phone```**
+ - **```role```**
+ - **```displayName```**
+ - **```birthday```** (необязательное поле)
+ - **```identifyingNumber```** (необязательное поле)
+
+  Возвращаемый ответ
+  ```
+  {
+      "success": true,
+      "payload": {
+          "phone": "7049454715",
+          "displayName": "Test Testovich",
+          "role": "customer",
+          "birthday": null,
+          "identifyingNumber": null,
+          "email": null,
+          "avatar": null,
+          "avgRating": null,
+          "ratingCount": null,
+          "lastPosition": null,
+          "id": 35,
+          "status": "ACTIVE"
+      }
+  }
+  ```
+
 
 ## GET
 
