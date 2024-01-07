@@ -6,14 +6,8 @@ import { SignInUserDto } from '@/dto/signInUser.dto';
 import { RegisterUserDto } from '@/dto/registerUser.dto';
 import { UserWithRoleDto } from '@/dto/userWithRole.dto';
 import { formatErrors } from '@/helpers/formatErrors';
-import { UserRepository } from '@/repositories/user.repository';
-import { getUserParams } from '@/dto/getUserParams.dto';
-import { getCurrentDate } from '@/helpers/getCurrentDate';
 import dotenv from 'dotenv';
 import * as process from 'process';
-import * as fs from 'fs';
-import * as fastcsv from 'fast-csv';
-import path from 'path';
 
 dotenv.config();
 
@@ -22,127 +16,6 @@ export class AuthController {
 
     constructor() {
         this.service = new AuthService();
-    }
-
-    getUser: RequestHandler = async (req, res, next): Promise<void> => {
-        try {
-            const user = await this.service.getUserById(parseInt(req.params.id));
-            if (user) {
-                res.send(user);
-            } else {
-                res.status(400).send({
-                    success: false,
-                    message: 'user not found'
-                });
-            }
-        } catch (e: any) {
-            console.log(e)
-            if (Array.isArray(e)) {
-                res.status(401).send({
-                    success: false,
-                    message: e
-                })
-            } else {
-                res.status(401).send({
-                    success: false,
-                    message: e.message
-                })
-            }
-        }
-    }
-
-    getUsers: RequestHandler = async (req, res, next): Promise<void> => {
-        try {
-            const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
-            const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
-            const paramsDto = plainToInstance(getUserParams, req.query);
-            const errors = await validate(paramsDto);
-            if (errors.length) throw errors;
-            const result = await this.service.getUsers({ ...paramsDto, offset, limit });
-            if (result.users.length !== 0) {
-                res.send(result);
-            } else {
-                res.send({
-                    success: false,
-                    message: 'Users not found'
-                });
-            }
-        } catch (e: any) {
-            console.log(e)
-            if (Array.isArray(e)) {
-                res.status(401).send({
-                    success: false,
-                    message: e
-                })
-            } else {
-                res.status(401).send({
-                    success: false,
-                    message: e.message
-                })
-            }
-        }
-    }
-
-    getUserCSV: RequestHandler = async (req, res): Promise<void> => {
-        try {
-            const userRepository = new UserRepository();
-            const users = await userRepository.getUserCSV();
-
-            const formattedDateTime = getCurrentDate();
-
-            const csvFileName = `users_${formattedDateTime}.csv`;
-            const csvFilePath = path.join(__dirname, '../..', 'csv', csvFileName);
-
-            const ws = fs.createWriteStream(csvFilePath);
-            const csvStream = fastcsv.format({ headers: true });
-            csvStream.pipe(ws);
-
-            users.forEach(user => {
-                csvStream.write({
-                    'ID': user.id,
-                    'Телефон': user.phone,
-                    'Имя': user.displayName,
-                    'Email': user.email,
-                    'День рождения': user.birthday,
-                    'Роль': user.role,
-                    'Средний рейтинг': user.avgRating,
-                    'Кол-во отзывов': user.ratingCount,
-                    'Последнее местоположение': user.lastPosition,
-                    'БИН/ИИН': user.identifyingNumber,
-                    'Статус': user.status
-                });
-            });
-
-            csvStream.end();
-            ws.on('finish', () => {
-                console.log('CSV файл успешно создан.');
-                res.download(csvFilePath, csvFileName, (err) => {
-                    if (err) {
-                        console.error(err);
-                        res.status(500).json({ error: 'Internal Server Error' });
-                    } else {
-                        fs.unlinkSync(csvFilePath);
-                    }
-                });
-            });
-
-            ws.on('error', (error) => {
-                console.error(error);
-            });
-
-        } catch (e: any) {
-            console.log(e);
-            if (e.message) {
-                res.status(400).send({
-                    success: false,
-                    message: e.message
-                });
-            } else if (Array.isArray(e)) {
-                res.status(400).send(e);
-            } else {
-                res.status(500).send(e);
-            }
-        }
     }
 
     signInWithRole: RequestHandler = async (req, res) => {

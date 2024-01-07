@@ -4,7 +4,7 @@ import { validate } from 'class-validator';
 import { OrderService } from '@/services/order.service';
 import { OrderDto } from '@/dto/order.dto';
 import { ERole } from '@/enum/ERole.enum';
-import { AuthService } from '@/services/auth.service';
+import { UserService } from '@/services/user.service';
 import { getOrderParams } from '@/dto/getOrderParams.dto';
 import { EOrderStatus } from '@/enum/EOrderStatus.enum';
 import { OrderRepository } from '@/repositories/order.repository';
@@ -16,11 +16,11 @@ import path from 'path';
 
 export class OrderController {
     private service: OrderService;
-    private authService: AuthService;
+    private userService: UserService;
 
     constructor() {
         this.service = new OrderService();
-        this.authService = new AuthService();
+        this.userService = new UserService();
     }
 
     getOrder: RequestHandler = async (req, res, next): Promise<void> => {
@@ -140,13 +140,13 @@ export class OrderController {
             ws.on('finish', () => {
                 console.log('CSV файл успешно создан.');
                 res.download(csvFilePath, csvFileName, (err) => {
-                        if (err) {
-                            console.error(err);
-                            res.status(500).json({ error: 'Internal Server Error' });
-                        } else {
-                            fs.unlinkSync(csvFilePath);
-                        }
-                    });
+                    if (err) {
+                        console.error(err);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    } else {
+                        fs.unlinkSync(csvFilePath);
+                    }
+                });
             });
 
             ws.on('error', (error) => {
@@ -184,13 +184,13 @@ export class OrderController {
                         });
                     }
                     // Проверяем наличие пользователя в БД по номеру телефона и роли клиента
-                    const user = await this.authService.getUserByPhoneAndRole(orderDto.phone, ERole.customer);
+                    const user = await this.userService.getUserByPhoneAndRole(orderDto.phone, ERole.customer);
                     // Если пользователь не найден
                     if (!user) {
                         // Создаем клиента
                         const registerUserByManager = plainToInstance(RegisterUserByManager, req.body);
                         registerUserByManager.role = ERole.customer;
-                        const createdCustomer = await this.authService.addUser(registerUserByManager);
+                        const createdCustomer = await this.userService.addUser(registerUserByManager);
                         orderDto.customerId = createdCustomer.id;
                     } else {
                         orderDto.customerId = user.id;

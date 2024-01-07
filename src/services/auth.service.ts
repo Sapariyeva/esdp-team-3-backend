@@ -1,38 +1,21 @@
 import { SignInUserDto } from '@/dto/signInUser.dto';
 import { RegisterUserDto } from '@/dto/registerUser.dto';
-import { IUser, IUserWithTokens, IUserWithoutPass } from '@/interfaces/IUser.interface';
+import { IUserWithTokens, IUserWithoutPass } from '@/interfaces/IUser.interface';
 import { UserRepository } from '@/repositories/user.repository';
-import { ERole } from '@/enum/ERole.enum';
 import { UserWithRoleDto } from '@/dto/userWithRole.dto';
 import { validate } from 'class-validator';
 import { TokenService } from '@/services/token.service';
-import { IGetUserParams } from '@/interfaces/IGetParams';
-import { IUserList } from '@/interfaces/IList.interface';
-import { RegisterUserByManager } from '@/dto/registerUserByManager.dto';
+import { UserService } from './user.service';
 
 export class AuthService {
     private repository: UserRepository;
     private tokenService: TokenService;
+    private userService: UserService;
 
     constructor() {
         this.repository = new UserRepository();
         this.tokenService = new TokenService();
-    }
-
-    getUserById = async (id: number): Promise<IUserWithoutPass | null> => {
-        return await this.repository.getUserById(id);
-    }
-
-    getUsers = async (params: IGetUserParams): Promise<IUserList> => {
-        return await this.repository.getUsers(params);
-    }
-
-    getUserByIdAndRole = async (id: number, role: ERole): Promise<IUser | null> => {
-        return await this.repository.getUserByIdAndRole(id, role);
-    }
-
-    getUserByPhoneAndRole = async (phone: string, role: ERole): Promise<IUser | null> => {
-        return await this.repository.getUserByPhoneAndRole(phone, role);
+        this.userService = new UserService();
     }
 
     signInWithRole = async (userDto: UserWithRoleDto): Promise<IUserWithTokens> => {
@@ -62,12 +45,6 @@ export class AuthService {
         return { ...user, ...tokens };
     }
 
-    addUser = async (userDto: RegisterUserByManager): Promise<IUser> => {
-        const errors = await validate(userDto);
-        if (errors.length) throw errors;
-        return await this.repository.addUser(userDto);
-    }
-
     signOut = async (token: string): Promise<number> => {
         return await this.tokenService.removeToken(token);
     }
@@ -82,7 +59,7 @@ export class AuthService {
             throw new Error('Unauthorized');
         }
 
-        const user = await this.getUserById(parseInt(userId));
+        const user = await this.userService.getUserById(parseInt(userId));
         let tokens;
         if (user) {
             tokens = this.tokenService.generateTokens(user);
